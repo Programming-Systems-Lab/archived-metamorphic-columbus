@@ -1,9 +1,9 @@
-package edu.columbia.cs.psl.mountaindew.runtime;
+package edu.columbia.cs.psl.metamorphic.runtime;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import edu.columbia.cs.psl.mountaindew.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 
 /**
  * Each intercepted object will have its _own_ Interceptor instance.

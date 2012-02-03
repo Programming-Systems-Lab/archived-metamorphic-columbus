@@ -1,4 +1,4 @@
-package edu.columbia.cs.psl.mountaindew.runtime.visitor;
+package edu.columbia.cs.psl.metamorphic.runtime.visitor;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
 
-import edu.columbia.cs.psl.mountaindew.runtime.Interceptor;
+import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 
 public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String name;
@@ -18,7 +18,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private Label timeVarStart = new Label();
 	private Label timeVarEnd = new Label();
 	public final static String INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew";
-	public final static String INTERCEPTOR_CLASS_NAME = "edu/columbia/cs/psl/mountaindew/runtime/Interceptor";
+	public final static String INTERCEPTOR_CLASS_NAME = "edu/columbia/cs/psl/metamorphic/runtime/Interceptor";
 	private Class myClass;
 	private Type[] argumentTypes;
 	
@@ -32,7 +32,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	boolean rewrite = false;
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-		if(desc.equals("Ledu/columbia/cs/psl/mountaindew/runtime/annotation/Metamorphic;"))
+		if(desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;"))
 			rewrite = true;
 		return null;
 	}
