@@ -36,34 +36,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 			rewrite = true;
 		return null;
 	}
-	java.lang.reflect.Method getCurMethod()
-	{
 
-		java.lang.reflect.Method curMethod = null;
-		try {
-			for(java.lang.reflect.Method m : myClass.getMethods())
-			{
-				boolean ok = true;
-				if(m.getName().equals(name))
-				{
-					Class[] mArgs = m.getParameterTypes();
-				}
-			}
-//			 curMethod = myClass.getMethod(name, paramTypes);
-			 System.out.println(curMethod);
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		catch (NoSuchMethodException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		return curMethod;
-	}
 	@Override
 	protected void onMethodEnter() {
 		if(!rewrite)
@@ -76,17 +49,38 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		visitIntInsn(ALOAD, 0);
 		visitTypeInsn(NEW, INTERCEPTOR_CLASS_NAME);
 		dup();
-		visitMethodInsn(INVOKESPECIAL, INTERCEPTOR_CLASS_NAME, "<init>", "()V");
+		loadThis();
+		visitMethodInsn(INVOKESPECIAL, INTERCEPTOR_CLASS_NAME, "<init>", "(Ljava/lang/Object;)V");
 		super.visitFieldInsn(PUTFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
 
 		visitLabel(the_method);
 		
+		
+
+
+
+		
 		visitIntInsn(ALOAD, 0);
 		super.visitFieldInsn(GETFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+		visitLdcInsn(name);
+
+		push(argumentTypes.length);
+		newArray(Type.getType(String.class));
+		for (int i = 0; i < argumentTypes.length; i++) {
+			dup();
+		    push(i);
+		    if(argumentTypes[i].getSort() != Type.OBJECT && argumentTypes[i].getSort() != Type.ARRAY)
+		    	visitLdcInsn(argumentTypes[i].getClassName());
+		    else
+		    	visitLdcInsn(argumentTypes[i].getInternalName().replace("/", "."));
+		    box(Type.getType(String.class));
+			arrayStore(Type.getType(String.class));
+		}
 		
-		visitLdcInsn(methodDesc);
 		loadArgArray();
-		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("void onEnter (java.lang.String, java.lang.Object[])"));
+		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("void __onEnter (java.lang.String, java.lang.String[], java.lang.Object[])"));
+		
+		
 		super.onMethodEnter();
 	}
 	

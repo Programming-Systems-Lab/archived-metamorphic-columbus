@@ -5,15 +5,25 @@ import java.util.ArrayList;
 
 import edu.columbia.cs.psl.mountaindew.runtime.annotation.Metamorphic;
 
+/**
+ * Each intercepted object will have its _own_ Interceptor instance.
+ * That instance will stick around for the lifetime of the intercepted object.
+ * 
+ * NB if you want to keep a list of these Interceptors somewhere statically,
+ * you probably want to use a WeakHashMap so as to not create memory leaks
+ * 
+ * @author jon
+ *
+ */
+public class Interceptor extends AbstractInterceptor {
 
-public class Interceptor{
-	public Interceptor(Object intercepted)
-	{
-		System.out.println("We are intercepting object " + intercepted);
+	public Interceptor(Object intercepted) {
+		super(intercepted);
 	}
+
 	public void onEnter(Method method, Object[] params)
 	{
-		System.out.println("We have entered the method" + method);
+		System.out.println("We have entered the method <" + method +"> on the object <" + getInterceptedObject()+">" );
 		for(Object o : params)
 		{
 			System.out.println("Param: <"+o+">");
