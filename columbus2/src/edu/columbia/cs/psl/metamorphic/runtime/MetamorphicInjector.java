@@ -26,6 +26,11 @@ public class MetamorphicInjector {
 //		SimpleExample.main(args);
 	}
 	public static void main(String[] args) {
+		if(args.length == 0)
+		{
+			System.err.println("Usage: java edu.columbia.cs.psl.metamorphic.runtime.MetamorphicInjector nameOfClassWithMain [Optional arguments for said class]");
+			System.exit(0);
+		}
 		new MetamorphicInjector().go(args);
 	}
 }
