@@ -1,6 +1,14 @@
 package edu.columbia.cs.psl.metamorphic.processor;
 
-
+/**
+ * A metamorphic input processor is a class that provides a functional
+ * transformation to some input. Most uses should not directly implement this
+ * interface, but rather instead one of the abstract helpers
+ * @author jon
+ * @see AbstractElementProcessor
+ * @see AbstractArrayProcessor
+ * @see ArrayProcessorHelper
+ */
 public interface MetamorphicInputProcessor {
 	public <T> T apply(T a) throws IllegalArgumentException;
 	public int apply(int a) throws IllegalArgumentException;
@@ -19,4 +27,6 @@ public interface MetamorphicInputProcessor {
 	public byte[] apply(byte[] a) throws IllegalArgumentException;
 	public char[] apply(char[] a) throws IllegalArgumentException;
 	public double[] apply(double[] a) throws IllegalArgumentException;
+	
+	public String getName();
 }

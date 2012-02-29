@@ -1,9 +1,17 @@
 package edu.columbia.cs.psl.metamorphic.processor;
 
-import java.lang.reflect.Array;
-
+/**
+ * A superclass for metamorphic input processors that process ONLY array types, providing
+ * the convenience of automatically throwing exceptions for non-array types. Note that 
+ * implementors will probably prefer to also handle List types, for which you'd need to override
+ * the T apply(T a) definition too.
+ * 
+ * Most implementors who provide just a simple transformation on each array element and don't
+ * care about element type can use the {@link ArrayProcessorHelper}
+ * @author jon
+ *
+ */
 public abstract class AbstractArrayProcessor implements MetamorphicInputProcessor {
-	public abstract String getName();
 	
 	public <T> T apply(T a) throws IllegalArgumentException
 	{

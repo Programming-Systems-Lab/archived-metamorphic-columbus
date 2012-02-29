@@ -2,6 +2,14 @@ package edu.columbia.cs.psl.metamorphic.processor;
 
 import java.util.List;
 
+/**
+ * A superclass for metamorphic input processors which typically do not care
+ * about the values in the arrays, but only the structure. Implementors need 
+ * only provide two methods, one for arrays and one for Lists which are called
+ * for any kind of array (primitive or otherwise).
+ * @author jon
+ *
+ */
 public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 	public <T> T[] apply(T[] a) throws IllegalArgumentException 
 	{

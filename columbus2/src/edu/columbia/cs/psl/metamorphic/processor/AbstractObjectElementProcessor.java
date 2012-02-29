@@ -2,7 +2,6 @@ package edu.columbia.cs.psl.metamorphic.processor;
 
 public abstract class AbstractObjectElementProcessor implements
 		MetamorphicInputProcessor {
-	public abstract String getName();
 
 	@Override
 	public boolean apply(boolean a) throws IllegalArgumentException {
