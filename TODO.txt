@@ -1,0 +1,36 @@
+Outline of program:
+
+User input:
+MyClass.java
+	/*@meta
+	* property*/
+	f(...) {
+	}
+
+Preprocessor: 
+	save old MyClass.java as MyClass.java.bak
+	create new MyClass.java
+		_f(...) {
+		} //original f function
+		
+		f(...) {
+		} // f wrapper
+		
+		what does the wrapper do?
+			logs inputs (i)
+			clones process
+			clone: modifies inputs in cloned process (i')
+			clone: logs modified inputs (i')
+			clone: predicts output based on modified inputs (o')
+			clone: logs predicted output (o')
+			clone: runs _f(i') --> o''
+			clone: logs o''
+			clone: dies
+			runs f(i) --> o
+			logs o
+			
+			calls compare --> outputs result of comparison of {i,i'} and {o,o',o''}
+
+Runtime:
+	run the application (which should call MyClass.f(...)) --> check log
+	
