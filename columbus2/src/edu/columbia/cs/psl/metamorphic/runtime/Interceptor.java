@@ -1,9 +1,15 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
-import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.processor.impl.Shuffle;
+import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
+import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
+import edu.columbia.cs.psl.metamorphic.struct.Variable;
 
 /**
  * Each intercepted object will have its _own_ Interceptor instance.
@@ -16,23 +22,98 @@ import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
  *
  */
 public class Interceptor extends AbstractInterceptor {
-
+	private HashMap<Integer, MethodInvocation> invocations = new HashMap<Integer, MethodInvocation>();
+	private Integer invocationId = 0;
+	
 	public Interceptor(Object intercepted) {
 		super(intercepted);
 	}
-
-	public void onEnter(Method method, Object[] params)
+	
+	public int onEnter(Object callee, Method method, Object[] params)
 	{
-		System.out.println("We have entered the method <" + method +"> on the object <" + getInterceptedObject()+">" );
-		for(Object o : params)
+		if(isChild(callee))
+			return -1;
+		int retId = 0;
+		synchronized(invocationId)
 		{
-			System.out.println("Param: <"+o+">");
+			invocationId++;
+			retId = invocationId;	
 		}
+		final MethodInvocation inv = new MethodInvocation();
+		inv.params = new Variable[params.length];
+		for(int i=0;i<params.length;i++)
+		{
+			Variable v = new Variable();
+			v.position = i;
+			v.value = params[i];
+			inv.params[i]=v;
+		}
+		inv.method = method;
+		inv.callee = callee;
+		
+		inv.childParams = inv.params;
+		
+		/**
+		 * Make some changes here to instead apply the requested properties
+		 */
+		Shuffle s = new Shuffle();
+		for(Variable v : inv.childParams)
+		{
+			try
+			{
+				v.value = s.apply(v.value);
+			}
+			catch(IllegalArgumentException ex)
+			{
+				//DO nothing, this property just wasn't applicable
+			}
+		}
+		invocations.put(retId, inv);
+		
+		inv.childThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Object clone = inv.callee.getClass().getMethod(InterceptingClassVisitor.CLONE_OVERRIDE_METHOD).invoke(inv.callee);
+					setAsChild(clone);
+					Object[] params = new Object[inv.childParams.length];
+					for(int i = 0;i<inv.childParams.length;i++)
+					{
+						params[i]=inv.childParams[i].value;
+					}
+					inv.childReturnValue = inv.method.invoke(clone, params);
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		inv.childThread.start();
+		return retId;
 	}
 	
-	public void onExit(Object val, int op)
+	public void onExit(Object val, int op, int id)
 	{
-		System.out.println("On exit: <" + val+"> " + op);
+		if(id < 0)
+			return;
+		MethodInvocation inv = invocations.remove(id);
+		inv.returnValue = val;
+		try {
+			inv.childThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Invocation result: " + inv);
 	}
+	
 } 
 

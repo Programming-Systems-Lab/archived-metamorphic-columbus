@@ -1,5 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.processor;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -86,6 +88,16 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 				} catch (IllegalAccessException e) {
 					throw new IllegalArgumentException("Requested object doesn't have an accesible constructor", e);
 				}
+		}
+		else if(a.getClass().isArray())
+		{
+			try {
+				T newArray = (T) Array.newInstance(a.getClass().getComponentType(), Array.getLength(a));
+				apply(a,newArray);
+		        return newArray;
+			} catch (Exception e) {
+				throw new IllegalArgumentException("This metamorphic processor is only defined for arrays",e);
+			}
 		}
 		throw new IllegalArgumentException("This metamorphic processor is only defined for arrays");
 	}

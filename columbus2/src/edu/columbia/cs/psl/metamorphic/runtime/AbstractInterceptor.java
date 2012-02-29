@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.objectweb.asm.Type;
 
+import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
+
 public abstract class AbstractInterceptor {
 	private Object interceptedObject;
 	
@@ -16,13 +18,50 @@ public abstract class AbstractInterceptor {
 	public Object getInterceptedObject() {
 		return interceptedObject;
 	}
-	public abstract void onEnter(Method method, Object[] params);
+	public abstract int onEnter(Object callee, Method method, Object[] params);
 	
-	public abstract void onExit(Object val, int op);
+	public abstract void onExit(Object val, int op, int id);
 	
-	public final void __onEnter(String methodName, String[] types, Object[] params)
+	protected void setAsChild(Object obj)
 	{
-		onEnter(getCurMethod(methodName,types), params);
+		try {
+			obj.getClass().getField(InterceptingClassVisitor.IS_CHILD_FIELD).setBoolean(obj, true);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	protected boolean isChild(Object callee)
+	{
+		try {
+			return callee.getClass().getField(InterceptingClassVisitor.IS_CHILD_FIELD).getBoolean(callee);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public final int __onEnter(String methodName, String[] types, Object[] params, Object callee)
+	{
+		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
 
 	private Method getCurMethod(String methodName,String[] types)

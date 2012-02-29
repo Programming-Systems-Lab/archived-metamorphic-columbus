@@ -36,7 +36,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 			rewrite = true;
 		return null;
 	}
-
+	int refIdForInterceptor;
 	@Override
 	protected void onMethodEnter() {
 		if(!rewrite)
@@ -54,10 +54,8 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		super.visitFieldInsn(PUTFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
 
 		visitLabel(the_method);
-		
-		
 
-
+		refIdForInterceptor = newLocal(Type.INT_TYPE);
 
 		
 		visitIntInsn(ALOAD, 0);
@@ -78,9 +76,9 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		}
 		
 		loadArgArray();
-		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("void __onEnter (java.lang.String, java.lang.String[], java.lang.Object[])"));
-		
-		
+		loadThis();
+		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("int __onEnter (java.lang.String, java.lang.String[], java.lang.Object[], java.lang.Object)"));
+		storeLocal(refIdForInterceptor);
 		super.onMethodEnter();
 	}
 	
@@ -111,8 +109,8 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 			super.visitFieldInsn(GETFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
 			swap();
 	     visitIntInsn(SIPUSH, opcode);
-	     
-	     visitMethodInsn(INVOKEVIRTUAL, INTERCEPTOR_CLASS_NAME, "onExit", "(Ljava/lang/Object;I)V");
+			loadLocal(refIdForInterceptor);
+	     visitMethodInsn(INVOKEVIRTUAL, INTERCEPTOR_CLASS_NAME, "onExit", "(Ljava/lang/Object;II)V");
 	   }
 	private String className;
 	public void setClassName(String className) {

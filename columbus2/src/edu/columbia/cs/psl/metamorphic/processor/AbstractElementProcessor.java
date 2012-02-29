@@ -2,12 +2,24 @@ package edu.columbia.cs.psl.metamorphic.processor;
 
 import java.util.List;
 
+/**
+ * Provides a superclass for metamorphic input processors that apply only
+ * to specific elements (rather than to lists or arrays). For convenience,
+ * this abstract class will process all array and list inputs by calling
+ * the unary apply on each element of each list.
+ * 
+ * This abstract class will also convienently unbox and rebox primitive types,
+ * so there is no need to specifically handle Integer, Float, etc. For this purpose,
+ * do not override T apply, rather, override T applyToNonListObject
+ * @author jon
+ *
+ */
 public abstract class AbstractElementProcessor implements
 		MetamorphicInputProcessor {
 	public abstract String getName();
 
 	@SuppressWarnings("unchecked")
-	public <T> T apply(T a) throws IllegalArgumentException {
+	public final <T> T apply(T a) throws IllegalArgumentException {
 		if(a instanceof List<?>)
 		{
 			try {
