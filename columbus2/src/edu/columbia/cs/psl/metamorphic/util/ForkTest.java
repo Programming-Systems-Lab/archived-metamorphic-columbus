@@ -1,43 +1,14 @@
 package edu.columbia.cs.psl.metamorphic.util;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.io.*;
-import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.SocketChannel;
+import java.io.File;
+import java.io.PrintWriter;
+import java.net.Socket;
 
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import edu.columbia.cs.psl.metamorphic.ipc.IPCManager;
 
 
-public class ForkTest extends SimpleChannelHandler
+public class ForkTest
 {
-	
-	  @Override
-	    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		  ChannelBuffer buf = (ChannelBuffer) e.getMessage();
-		    while(buf.readable()) {
-		        System.out.println((char) buf.readByte());
-		        System.out.flush();
-		    }	    }
 
-	    @Override
-	    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-	        e.getCause().printStackTrace();
-	        
-	        Channel ch = e.getChannel();
-	        ch.close();
-	    }
 	    
     public static void main(String[] args)
     {
@@ -51,68 +22,29 @@ public class ForkTest extends SimpleChannelHandler
 		ex.printStackTrace();
 	}
     }
-    private void makeServer()
-    {
-    	final ForkTest parent = this;
-    	  ChannelFactory factory =
-    	            new NioServerSocketChannelFactory(
-    	                    Executors.newCachedThreadPool(),
-    	                    Executors.newCachedThreadPool());
-
-    	        ServerBootstrap bootstrap = new ServerBootstrap(factory);
-
-    	        bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-					
-					@Override
-					public ChannelPipeline getPipeline() throws Exception {
-						// TODO Auto-generated method stub
-    	                return org.jboss.netty.channel.Channels.pipeline(parent);
-					}
-				});
-
-    	        bootstrap.setOption("child.tcpNoDelay", true);
-    	        bootstrap.setOption("child.keepAlive", true);
-
-    	        bootstrap.bind(new InetSocketAddress(4356));
-    }
+  
     private int flag = 0;
     public void loop() throws Exception
     {
 	    System.out.println("parent "  + flag);
-	    makeServer();
+	    
+	    IPCManager mgr = IPCManager.getInstance();
+	    Socket clientSock = mgr.getAClientSocket();
+	    
 	    int pid = Forker.fork();
+
 
 	    if (pid == 0)
 	    {
+	    	mgr.isChild = true;
 	    	flag = 3;
-		System.out.println("child " + flag);
-		SocketChannel channel = null;
-    	try{
-    	 channel = SocketChannel.open();
-    	 System.out.println("Connecting");
-    	channel.connect(new InetSocketAddress("localhost", 4356));
-    	System.out.println("Connected");
-    	}
-    	catch(Exception ex)
-    	{
-    	ex.printStackTrace();	
-    	}
-
-		flag = 10;
-		try {
+	    	System.out.println("child " + flag);
+		
+	    	flag = 10;
+	    	try {
 //			Thread.currentThread().sleep(100);
 			String newData = "New String to write to file..." + System.currentTimeMillis();
-
-			ByteBuffer buf = ByteBuffer.allocate(48);
-			buf.clear();
-			buf.put(newData.getBytes());
-
-			buf.flip();
-
-			while(buf.hasRemaining()) {
-			    channel.write(buf);
-			}
-			channel.close();
+			mgr.sendToParent(newData,clientSock);
 			System.out.println("Closed channel");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -123,23 +55,10 @@ public class ForkTest extends SimpleChannelHandler
 	    }
 	    else
 	    {
-	    	try{
-//	    	SocketChannel channel = SocketChannel.open();
-//	    	channel.connect(new InetSocketAddress("localhost", 4356));
-	    	}
-	    	catch(Exception ex)
-	    	{
-	    		ex.printStackTrace();
-	    	}
+
 	    	System.out.println("Parent pid: " + pid);
 	    	flag = 1;
 	    	System.out.println("Set flag");
-//	    	try {
-//				Thread.currentThread().sleep(0);
-//			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 	    }
 	
     }
