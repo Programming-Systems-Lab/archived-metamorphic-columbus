@@ -36,8 +36,10 @@ public class Interceptor extends AbstractInterceptor {
 	
 	public int onEnter(Object callee, Method method, Object[] params)
 	{
-		IPCManager mgr = IPCManager.getInstance();
-		if(mgr.isChild)
+//		IPCManager mgr = IPCManager.getInstance();
+//		if(mgr.isChild)
+//			return -1;
+		if(isChild(callee))
 			return -1;
 		
 		int retId = 0;
@@ -76,6 +78,9 @@ public class Interceptor extends AbstractInterceptor {
 			}
 		}
 		invocations.put(retId, inv);
+
+		
+		/*
 		Socket childToServer = null;
 		try {
 			childToServer = mgr.getAClientSocket();
@@ -130,6 +135,36 @@ public class Interceptor extends AbstractInterceptor {
 		{
 			//This is the main process
 		}
+		*/
+		
+		inv.childThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Object clone = inv.callee.getClass().getMethod(InterceptingClassVisitor.CLONE_OVERRIDE_METHOD).invoke(inv.callee);
+					setAsChild(clone);
+					Object[] params = new Object[inv.childParams.length];
+					for(int i = 0;i<inv.childParams.length;i++)
+					{
+						params[i]=inv.childParams[i].value;
+					}
+					inv.childReturnValue = inv.method.invoke(clone, params);
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		inv.childThread.start();
+
 		return retId;
 	}
 	
@@ -141,13 +176,17 @@ public class Interceptor extends AbstractInterceptor {
 		{
 		MethodInvocation inv = invocations.remove(id);
 		inv.returnValue = val;
-		synchronized (inv) {
-			while(inv.childRemoteId != 0)
-			{
-				inv.wait();
-			}
-		}
+//		synchronized (inv) {
+//			while(inv.childRemoteId != 0)
+//			{
+//				inv.wait();
+//			}
+//		}
+
+		
+		inv.childThread.join();
 		System.out.println("Invocation result: " + inv);
+		
 		}
 		catch(Exception ex)
 		{
