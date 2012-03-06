@@ -47,7 +47,7 @@ public class Forker {
 			Process p = Runtime.getRuntime().exec(cmd);
 			p.getInputStream().read(b);
 			String pid = new String(b).trim();
-
+			System.out.println("Killing child, which we think is " + pid);
 			// now kill this process
 			String[] cmd2 = { "kill", "-9", pid };
 			p = Runtime.getRuntime().exec(cmd2);
