@@ -11,7 +11,7 @@ package edu.columbia.cs.psl.metamorphic.processor;
  * @author jon
  *
  */
-public abstract class AbstractArrayProcessor implements MetamorphicInputProcessor {
+public abstract class AbstractArrayProcessor extends MetamorphicInputProcessor {
 	
 	public <T> T apply(T a) throws IllegalArgumentException
 	{

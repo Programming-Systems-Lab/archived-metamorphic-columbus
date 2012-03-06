@@ -9,7 +9,6 @@ import java.util.HashSet;
 import edu.columbia.cs.psl.metamorphic.processor.impl.Shuffle;
 import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
 import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
-import edu.columbia.cs.psl.metamorphic.struct.Variable;
 
 /**
  * Each intercepted object will have its _own_ Interceptor instance.
@@ -40,14 +39,7 @@ public class Interceptor extends AbstractInterceptor {
 			retId = invocationId;	
 		}
 		final MethodInvocation inv = new MethodInvocation();
-		inv.params = new Variable[params.length];
-		for(int i=0;i<params.length;i++)
-		{
-			Variable v = new Variable();
-			v.position = i;
-			v.value = params[i];
-			inv.params[i]=v;
-		}
+		inv.params = params;
 		inv.method = method;
 		inv.callee = callee;
 		
@@ -57,11 +49,11 @@ public class Interceptor extends AbstractInterceptor {
 		 * Make some changes here to instead apply the requested properties
 		 */
 		Shuffle s = new Shuffle();
-		for(Variable v : inv.childParams)
+		for(Object v : inv.childParams)
 		{
 			try
 			{
-				v.value = s.apply(v.value);
+				v = s.apply(v);
 			}
 			catch(IllegalArgumentException ex)
 			{
@@ -80,7 +72,7 @@ public class Interceptor extends AbstractInterceptor {
 					Object[] params = new Object[inv.childParams.length];
 					for(int i = 0;i<inv.childParams.length;i++)
 					{
-						params[i]=inv.childParams[i].value;
+						params[i]=inv.childParams[i];
 					}
 					inv.childReturnValue = inv.method.invoke(clone, params);
 				} catch (SecurityException e) {

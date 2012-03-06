@@ -1,6 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.processor;
 
-public abstract class AbstractObjectElementProcessor implements
+public abstract class AbstractObjectElementProcessor extends
 		MetamorphicInputProcessor {
 
 	@Override

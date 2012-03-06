@@ -6,16 +6,16 @@ public class MethodInvocation
 {
 	public Object callee;
 	public Method method;
-	public Variable[] params;
+	public Object[] params;
 	public Object returnValue;
 
 	public Thread childThread;
-	public Variable[] childParams;
+	public Object[] childParams;
 	public Object childReturnValue;
 	@Override
 	public String toString() {
 		String paramStr = "";
-		for(Variable v : params)
+		for(Object v : params)
 		{
 			if(v != null)
 			paramStr += v.toString();
