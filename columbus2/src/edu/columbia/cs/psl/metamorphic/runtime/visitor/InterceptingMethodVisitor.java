@@ -9,7 +9,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.tree.AnnotationNode;
 
 import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 
