@@ -18,15 +18,19 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private Label timeVarStart = new Label();
 	private Label timeVarEnd = new Label();
 	public final static String INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew";
+	public final static String STATIC_INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew_static";
+
 	public final static String INTERCEPTOR_CLASS_NAME = "edu/columbia/cs/psl/metamorphic/runtime/Interceptor";
 	private Class myClass;
 	private Type[] argumentTypes;
+	private int access;
 	
 	protected InterceptingMethodVisitor(int api, MethodVisitor mv, int access,
 			String name, String desc) {
 		super(api, mv, access, name, desc);
 		this.name = name;
 		this.api = api;
+		this.access = access;
 		this.argumentTypes = Type.getArgumentTypes(desc);
 	}
 	boolean rewrite = false;
@@ -34,15 +38,68 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if(desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;"))
 			rewrite = true;
-		return null;
+		return super.visitAnnotation(desc, visible);
 	}
-	
-	int refIdForInterceptor;
-	@Override
-	protected void onMethodEnter() {
-		if(!rewrite)
-			return;
+	private void onStaticMethodEnter()
+	{
+		Label the_method = new Label();
+
+		/**
+  LINENUMBER 28 L0
+    NEW edu/columbia/cs/psl/metamorphic/runtime/Interceptor
+    DUP
+    LDC "edu.columbia.cs.psl.metamorphic.example.SimpleExample"
+    INVOKESTATIC java/lang/Class.forName(Ljava/lang/String;)Ljava/lang/Class;
+    INVOKESPECIAL edu/columbia/cs/psl/metamorphic/runtime/Interceptor.<init>(Ljava/lang/Object;)V
+    PUTSTATIC edu/columbia/cs/psl/metamorphic/example/SimpleExample.myInterceptor : Ledu/columbia/cs/psl/metamorphic/runtime/Interceptor;
+   L1
+    GOTO L3
+   L2
+    LINENUMBER 29 L2
+   FRAME SAME1 java/lang/ClassNotFoundException
+    ASTORE 2
+		 */
+		super.visitFieldInsn(GETSTATIC, className.replace(".", "/"), STATIC_INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+		super.visitJumpInsn(IFNONNULL, the_method);
 		
+		//Initialize a new interceptor with the class as the intercepted object
+		visitTypeInsn(NEW, INTERCEPTOR_CLASS_NAME);
+		dup();
+		visitLdcInsn(className);
+		visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
+		visitMethodInsn(INVOKESPECIAL, INTERCEPTOR_CLASS_NAME, "<init>", "(Ljava/lang/Object;)V");
+		super.visitFieldInsn(PUTSTATIC, className.replace(".", "/"), STATIC_INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+
+		visitLabel(the_method);
+
+		refIdForInterceptor = newLocal(Type.INT_TYPE);
+
+		
+		super.visitFieldInsn(GETSTATIC, className.replace(".", "/"), STATIC_INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+		visitLdcInsn(name);
+
+		push(argumentTypes.length);
+		newArray(Type.getType(String.class));
+		for (int i = 0; i < argumentTypes.length; i++) {
+			dup();
+		    push(i);
+		    if(argumentTypes[i].getSort() != Type.OBJECT && argumentTypes[i].getSort() != Type.ARRAY)
+		    	visitLdcInsn(argumentTypes[i].getClassName());
+		    else
+		    	visitLdcInsn(argumentTypes[i].getInternalName().replace("/", "."));
+		    box(Type.getType(String.class));
+			arrayStore(Type.getType(String.class));
+		}
+		
+		loadArgArray();
+		visitLdcInsn(className);
+		visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
+		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("int __onEnter (java.lang.String, java.lang.String[], java.lang.Object[], java.lang.Object)"));
+		storeLocal(refIdForInterceptor);
+		super.onMethodEnter();
+	}
+	private void onMemberMethodEnter()
+	{
 		Label the_method = new Label();
 		visitIntInsn(ALOAD, 0);
 		super.visitFieldInsn(GETFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
@@ -77,10 +134,21 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		}
 		
 		loadArgArray();
-		loadThis();
+			loadThis();
 		invokeVirtual(Type.getType(Interceptor.class), Method.getMethod("int __onEnter (java.lang.String, java.lang.String[], java.lang.Object[], java.lang.Object)"));
 		storeLocal(refIdForInterceptor);
 		super.onMethodEnter();
+	}
+	int refIdForInterceptor;
+	@Override
+	protected void onMethodEnter() {
+		if(!rewrite)
+			return;
+		if ((access & Opcodes.ACC_STATIC) != 0)
+			onStaticMethodEnter();
+		else
+			onMemberMethodEnter();
+		
 	}
 	
 
@@ -106,8 +174,15 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	         }
 	         box(Type.getReturnType(this.methodDesc));
 	     }
-	     visitIntInsn(ALOAD, 0);
+	     if ((access & Opcodes.ACC_STATIC) != 0)
+	     {
+				super.visitFieldInsn(GETSTATIC, className.replace(".", "/"), STATIC_INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+	     }
+	     else
+	     {
+	    	 visitIntInsn(ALOAD, 0);
 			super.visitFieldInsn(GETFIELD, className.replace(".", "/"), INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
+	     }
 			swap();
 	     visitIntInsn(SIPUSH, opcode);
 			loadLocal(refIdForInterceptor);

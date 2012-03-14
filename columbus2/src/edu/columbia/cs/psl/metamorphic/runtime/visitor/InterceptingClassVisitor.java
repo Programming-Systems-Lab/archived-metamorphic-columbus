@@ -42,6 +42,12 @@ public class InterceptingClassVisitor extends ClassVisitor {
 		fn.accept(cv);
 		
 		
+		FieldNode fn3 = new FieldNode(Opcodes.ASM4, Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC,
+				InterceptingMethodVisitor.STATIC_INTERCEPTOR_FIELD_NAME,
+				Type.getDescriptor(Interceptor.class), null, null); //TODO: abstract the interceptor type
+		fn3.accept(cv);
+		
+		
 		FieldNode fn2 = new FieldNode(Opcodes.ASM4, Opcodes.ACC_PUBLIC,
 				IS_CHILD_FIELD,
 				Type.BOOLEAN_TYPE.getDescriptor(), null, false); //TODO: abstract the interceptor type

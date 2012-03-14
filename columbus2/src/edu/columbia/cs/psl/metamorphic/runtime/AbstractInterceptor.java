@@ -1,5 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -22,6 +23,25 @@ public abstract class AbstractInterceptor {
 	
 	public abstract void onExit(Object val, int op, int id);
 	
+	protected void setChild(Object obj, boolean val)
+	{
+		try {
+			obj.getClass().getField(InterceptingClassVisitor.IS_CHILD_FIELD).setBoolean(obj, val);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	protected void setAsChild(Object obj)
 	{
 		try {
@@ -42,6 +62,8 @@ public abstract class AbstractInterceptor {
 	}
 	protected boolean isChild(Object callee)
 	{
+		if(callee == null || callee.getClass().equals(Class.class))
+			return false;
 		try {
 			return callee.getClass().getField(InterceptingClassVisitor.IS_CHILD_FIELD).getBoolean(callee);
 		} catch (IllegalArgumentException e) {
