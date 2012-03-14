@@ -1,4 +1,4 @@
-package edu.columbia.cs.psl.metamorphic.processor;
+package edu.columbia.cs.psl.metamorphic.inputRelation;
 
 public abstract class AbstractObjectElementProcessor implements
 		MetamorphicInputProcessor {

@@ -1,8 +1,9 @@
-package edu.columbia.cs.psl.metamorphic.processor.impl;
+package edu.columbia.cs.psl.metamorphic.inputRelation.impl;
 
 import java.lang.reflect.Array;
 import java.util.List;
-import edu.columbia.cs.psl.metamorphic.processor.ArrayProcessorHelper;
+
+import edu.columbia.cs.psl.metamorphic.inputRelation.ArrayProcessorHelper;
 
 
 public class Reverse extends ArrayProcessorHelper {

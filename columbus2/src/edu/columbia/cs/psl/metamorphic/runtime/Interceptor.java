@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.columbia.cs.psl.metamorphic.inputRelation.impl.Shuffle;
 import edu.columbia.cs.psl.metamorphic.ipc.IPCManager;
-import edu.columbia.cs.psl.metamorphic.processor.impl.Shuffle;
 import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
 import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
 import edu.columbia.cs.psl.metamorphic.struct.Variable;

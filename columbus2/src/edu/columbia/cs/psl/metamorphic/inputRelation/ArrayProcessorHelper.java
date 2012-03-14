@@ -1,4 +1,4 @@
-package edu.columbia.cs.psl.metamorphic.processor;
+package edu.columbia.cs.psl.metamorphic.inputRelation;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;

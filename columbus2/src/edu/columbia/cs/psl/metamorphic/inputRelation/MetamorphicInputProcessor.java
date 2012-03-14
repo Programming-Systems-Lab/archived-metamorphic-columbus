@@ -1,4 +1,4 @@
-package edu.columbia.cs.psl.metamorphic.processor;
+package edu.columbia.cs.psl.metamorphic.inputRelation;
 
 /**
  * A metamorphic input processor is a class that provides a functional
