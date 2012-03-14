@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/53/trunk/eclipse
+END
+install-cloner.launch
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/40/trunk/eclipse/install-cloner.launch
+END
+TestClonerThreadSafety.launch
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/53/trunk/eclipse/TestClonerThreadSafety.launch
+END
+TestPerspectives.launch
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/53/trunk/eclipse/TestPerspectives.launch
+END
+BenchmarkCloner.launch
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/53/trunk/eclipse/BenchmarkCloner.launch
+END
+build-cloner.launch
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/35/trunk/eclipse/build-cloner.launch
+END
+TestCloner.launch
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/53/trunk/eclipse/TestCloner.launch
+END

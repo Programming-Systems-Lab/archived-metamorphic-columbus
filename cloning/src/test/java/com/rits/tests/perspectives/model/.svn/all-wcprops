@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/32/trunk/src/test/java/com/rits/tests/perspectives/model
+END
+ProductsCollection.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/perspectives/model/ProductsCollection.java
+END
+Product.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/perspectives/model/Product.java
+END
+RelatedProduct.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/32/trunk/src/test/java/com/rits/tests/perspectives/model/RelatedProduct.java
+END
+Products.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/perspectives/model/Products.java
+END
+OrderedProduct.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/perspectives/model/OrderedProduct.java
+END
+OrderedProducts.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/perspectives/model/OrderedProducts.java
+END

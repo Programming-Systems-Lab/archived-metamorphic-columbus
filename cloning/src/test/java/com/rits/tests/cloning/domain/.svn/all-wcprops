@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/57/trunk/src/test/java/com/rits/tests/cloning/domain
+END
+A.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/cloning/domain/A.java
+END
+B.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/cloning/domain/B.java
+END
+C.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/4/trunk/src/test/java/com/rits/tests/cloning/domain/C.java
+END
+F.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/57/trunk/src/test/java/com/rits/tests/cloning/domain/F.java
+END
+G.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/41/trunk/src/test/java/com/rits/tests/cloning/domain/G.java
+END
