@@ -41,7 +41,7 @@ public class InterceptingClassVisitor extends ClassVisitor {
 		for(InterceptingMethodVisitor mv : imvs)
 		{
 			//TODO: Generate the delegate methods to run each test here.
-			System.out.println(mv.getRules());
+			ArrayList<String> rules = mv.getRules();
 		}
 		FieldNode fn = new FieldNode(Opcodes.ASM4, Opcodes.ACC_PRIVATE,
 				InterceptingMethodVisitor.INTERCEPTOR_FIELD_NAME,
