@@ -14,7 +14,7 @@ import java.util.List;
  * @author jon
  *
  */
-public abstract class AbstractElementProcessor implements
+public abstract class AbstractElementProcessor extends
 		MetamorphicInputProcessor {
 	public abstract String getName();
 

@@ -11,12 +11,12 @@ public class MethodInvocation  implements Serializable
 	private static final long serialVersionUID = -2038681047970130055L;
 	public Object callee;
 	public Method method;
-	public Variable[] params;
+	public Object[] params;
 	public Object returnValue;
 	public Exception thrownExceptions;
 	
 	public Thread childThread;
-	public Variable[] childParams;
+	public Object[] childParams;
 	public Object childReturnValue;
 	public Exception childThrownExceptions;
 	public int childRemoteId;
@@ -25,7 +25,7 @@ public class MethodInvocation  implements Serializable
 	public String toString() {
 		String paramStr = "";
 		if(params != null)
-		for(Variable v : params)
+		for(Object v : params)
 		{
 			if(v != null)
 			paramStr += v.toString();
