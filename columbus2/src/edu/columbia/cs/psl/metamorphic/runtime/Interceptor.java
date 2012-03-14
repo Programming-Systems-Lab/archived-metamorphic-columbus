@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.rits.cloning.Cloner;
+
 import edu.columbia.cs.psl.metamorphic.inputProcessor.impl.Shuffle;
 import edu.columbia.cs.psl.metamorphic.ipc.IPCManager;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
@@ -34,7 +36,7 @@ public class Interceptor extends AbstractInterceptor {
 	public Interceptor(Object intercepted) {
 		super(intercepted);
 	}
-	
+	private Cloner cloner = new Cloner();
 	public int onEnter(Object callee, Method method, Object[] params)
 	{
 		if(isChild(callee))
@@ -52,7 +54,6 @@ public class Interceptor extends AbstractInterceptor {
 		inv.callee = callee;
 		
 		inv.childParams = inv.params;
-		
 		/**
 		 * Make some changes here to instead apply the requested properties
 		 */
@@ -68,12 +69,10 @@ public class Interceptor extends AbstractInterceptor {
 			@Override
 			public void run() {
 				try {
-					Object clone = inv.callee.getClass().getMethod(InterceptingClassVisitor.CLONE_OVERRIDE_METHOD).invoke(inv.callee);
+					Object clone = cloner.deepClone(inv.callee);
 					setAsChild(clone);
 					inv.childReturnValue = inv.method.invoke(clone, inv.childParams);
 				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
 					e.printStackTrace();
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();

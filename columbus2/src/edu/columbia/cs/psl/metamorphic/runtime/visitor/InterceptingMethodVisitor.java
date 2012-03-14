@@ -30,7 +30,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter {
 
 	boolean rewrite = false;
 
-	private MetamorphicRuleAnnotationVisitor ruleNode;
 
 	protected InterceptingMethodVisitor(int api, MethodVisitor mv, int access,
 			String name, String desc) {
@@ -47,12 +46,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter {
 
 	public String getName() {
 		return name;
-	}
-
-	public ArrayList<String> getRules() {
-		if (ruleNode == null)
-			return null;
-		return ruleNode.getRules();
 	}
 
 	private void onMemberMethodEnter() {
@@ -215,11 +208,10 @@ public class InterceptingMethodVisitor extends AdviceAdapter {
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if (desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;")) {
-			ruleNode = new MetamorphicRuleAnnotationVisitor(api,
-					super.visitAnnotation(desc, visible));
+		
 			rewrite = true;
 		}
-		return ruleNode;
+		return super.visitAnnotation(desc, visible);
 	}
 
 	@Override

@@ -54,7 +54,7 @@ public class SimpleExample implements Cloneable{
 	}
 	
 	public static void main(String[] args) {
-//		System.out.println(new SimpleExample().go(new String[] {"First","Second","Third","Fourth"}));
+		System.out.println(new SimpleExample().go(new String[] {"First","Second","Third","Fourth"}));
 //		System.out.println(SimpleExample.findClosestValue(new int[] {1,2,3,4,1000,10000,30000}, 300));
 		int[] values = new int[] {1,32,34};
 		int target = 3;

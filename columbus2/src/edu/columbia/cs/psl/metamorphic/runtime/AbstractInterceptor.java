@@ -85,7 +85,7 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
-
+	
 	private Method getCurMethod(String methodName,String[] types)
 	{
 		try {
