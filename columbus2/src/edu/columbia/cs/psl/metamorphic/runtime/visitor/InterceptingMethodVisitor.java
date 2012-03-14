@@ -44,21 +44,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	{
 		Label the_method = new Label();
 
-		/**
-  LINENUMBER 28 L0
-    NEW edu/columbia/cs/psl/metamorphic/runtime/Interceptor
-    DUP
-    LDC "edu.columbia.cs.psl.metamorphic.example.SimpleExample"
-    INVOKESTATIC java/lang/Class.forName(Ljava/lang/String;)Ljava/lang/Class;
-    INVOKESPECIAL edu/columbia/cs/psl/metamorphic/runtime/Interceptor.<init>(Ljava/lang/Object;)V
-    PUTSTATIC edu/columbia/cs/psl/metamorphic/example/SimpleExample.myInterceptor : Ledu/columbia/cs/psl/metamorphic/runtime/Interceptor;
-   L1
-    GOTO L3
-   L2
-    LINENUMBER 29 L2
-   FRAME SAME1 java/lang/ClassNotFoundException
-    ASTORE 2
-		 */
 		super.visitFieldInsn(GETSTATIC, className.replace(".", "/"), STATIC_INTERCEPTOR_FIELD_NAME, "L"+Interceptor.class.getName().replace(".", "/")+";");
 		super.visitJumpInsn(IFNONNULL, the_method);
 		
