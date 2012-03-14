@@ -56,13 +56,11 @@ public class Interceptor extends AbstractInterceptor {
 		/**
 		 * Make some changes here to instead apply the requested properties
 		 */
-		System.out.println(method);
-		for(Annotation a : method.getAnnotations())
+		String[] rule = method.getAnnotation(Metamorphic.class).rule();
+		for(String r : rule)
 		{
-			System.out.println(a);
+			System.out.println(r);
 		}
-//		String rule = method.getAnnotation(Metamorphic.class).rule();
-//		System.out.println("Rule is " + rule);
 		invocations.put(retId, inv);
 		
 		inv.childThread = new Thread(new Runnable() {

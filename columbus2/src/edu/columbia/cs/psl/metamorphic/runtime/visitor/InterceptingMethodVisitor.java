@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
+import org.objectweb.asm.tree.AnnotationNode;
 
 import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 
@@ -25,6 +26,11 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private Type[] argumentTypes;
 	private int access;
 	
+	public ArrayList<String> getRules() {
+		if(ruleNode == null)
+			return null;
+		return ruleNode.getRules();
+	}
 	protected InterceptingMethodVisitor(int api, MethodVisitor mv, int access,
 			String name, String desc) {
 		super(api, mv, access, name, desc);
@@ -34,11 +40,16 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		this.argumentTypes = Type.getArgumentTypes(desc);
 	}
 	boolean rewrite = false;
+	private MetamorphicRuleAnnotationVisitor ruleNode;
+	
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if(desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;"))
+		{
+			ruleNode = new MetamorphicRuleAnnotationVisitor(api,super.visitAnnotation(desc, visible));
 			rewrite = true;
-		return super.visitAnnotation(desc, visible);
+		}
+		return ruleNode;
 	}
 	private void onStaticMethodEnter()
 	{

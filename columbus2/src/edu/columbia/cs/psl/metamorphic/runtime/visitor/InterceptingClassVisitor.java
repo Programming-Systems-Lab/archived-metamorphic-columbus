@@ -1,6 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.runtime.visitor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -21,21 +22,27 @@ public class InterceptingClassVisitor extends ClassVisitor {
 		super(Opcodes.ASM4, cv);
 	}
 
+	private HashSet<InterceptingMethodVisitor> imvs = new HashSet<InterceptingMethodVisitor>();
 	@Override
 	public MethodVisitor visitMethod(int acc, String name, String desc,
 			String signature, String[] exceptions) {
 		MethodVisitor mv = cv.visitMethod(acc, name, desc, signature,
 				exceptions);
-		mv = new InterceptingMethodVisitor(Opcodes.ASM4, mv, acc, name, desc);
-		((InterceptingMethodVisitor) mv).setClassName(className);
-		return mv;
+		InterceptingMethodVisitor imv = new InterceptingMethodVisitor(Opcodes.ASM4, mv, acc, name, desc);
+		imv.setClassName(className);
+		imvs.add(imv);
+		return imv;
 	}
 
 
 	@Override
 	public void visitEnd() {
 		super.visitEnd();
-
+		for(InterceptingMethodVisitor mv : imvs)
+		{
+			//TODO: Generate the delegate methods to run each test here.
+			System.out.println(mv.getRules());
+		}
 		FieldNode fn = new FieldNode(Opcodes.ASM4, Opcodes.ACC_PRIVATE,
 				InterceptingMethodVisitor.INTERCEPTOR_FIELD_NAME,
 				Type.getDescriptor(Interceptor.class), null, null); //TODO: abstract the interceptor type
@@ -61,10 +68,7 @@ public class InterceptingClassVisitor extends ClassVisitor {
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 	}
-	public Object special() throws CloneNotSupportedException
-	{
-		return clone();
-	}
+
 	public void setClassName(String name) {
 		this.className = name;
 	}

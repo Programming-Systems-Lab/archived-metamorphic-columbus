@@ -22,7 +22,8 @@ public class SimpleExample implements Cloneable{
     @meta findClosestValue(\add(values, 10), target + 10) == \result + 10
     @meta findClosestValue(\shuffle(values), target) == \result
   */
-	@Metamorphic(rule="findClosestValue(\\multiply(values, 10), target * 10) == \\result * 10")
+	@Metamorphic(rule={"findClosestValue(\\multiply(values, 10), target * 10) == \\result * 10"//})
+			,"findClosestValue(\\add(values, 10), target + 10) == \\result + 10"})
   public int findClosestValue(int[] values, int target)
   {
 	int distance = 1000000; // start off with a really large distance
