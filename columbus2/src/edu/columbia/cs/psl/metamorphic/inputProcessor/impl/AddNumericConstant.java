@@ -1,6 +1,6 @@
-package edu.columbia.cs.psl.metamorphic.processor.impl;
+package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
-import edu.columbia.cs.psl.metamorphic.processor.AbstractElementProcessor;
+import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 
 public class AddNumericConstant extends AbstractElementProcessor {
 

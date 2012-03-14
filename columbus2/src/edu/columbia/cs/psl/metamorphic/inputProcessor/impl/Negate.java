@@ -1,6 +1,6 @@
-package edu.columbia.cs.psl.metamorphic.inputRelation.impl;
+package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
-import edu.columbia.cs.psl.metamorphic.inputRelation.AbstractElementProcessor;
+import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 
 public class Negate extends AbstractElementProcessor {
 

@@ -1,4 +1,4 @@
-package edu.columbia.cs.psl.metamorphic.inputRelation;
+package edu.columbia.cs.psl.metamorphic.inputProcessor;
 
 /**
  * A superclass for metamorphic input processors that process ONLY array types, providing
@@ -11,7 +11,7 @@ package edu.columbia.cs.psl.metamorphic.inputRelation;
  * @author jon
  *
  */
-public abstract class AbstractArrayProcessor implements MetamorphicInputProcessor {
+public abstract class AbstractArrayProcessor extends MetamorphicInputProcessor {
 	
 	public <T> T apply(T a) throws IllegalArgumentException
 	{

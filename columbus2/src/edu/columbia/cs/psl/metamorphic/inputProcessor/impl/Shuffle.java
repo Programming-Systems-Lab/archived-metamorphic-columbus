@@ -1,11 +1,11 @@
-package edu.columbia.cs.psl.metamorphic.inputRelation.impl;
+package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import edu.columbia.cs.psl.metamorphic.inputRelation.ArrayProcessorHelper;
+import edu.columbia.cs.psl.metamorphic.inputProcessor.ArrayProcessorHelper;
 
 
 public class Shuffle extends ArrayProcessorHelper {

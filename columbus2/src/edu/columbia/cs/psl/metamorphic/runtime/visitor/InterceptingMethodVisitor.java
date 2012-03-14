@@ -36,6 +36,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 			rewrite = true;
 		return null;
 	}
+	
 	int refIdForInterceptor;
 	@Override
 	protected void onMethodEnter() {
