@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="jass.modern.eclipse.converter.editorContribution"
+            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
+         <action
+               class="jass.modern.eclipse.converter.action.EditorActionDelegate"
+               disabledIcon="icon/convert_jml.gif"
+               icon="icon/convert_jml.gif"
+               id="jass.modern.eclipse.converter.importAction"
+               label="Convert JML..."
+               menubarPath="file/import.ext"
+               style="push">
+         </action>
+      </editorContribution>
+   </extension>
+
+</plugin>
