@@ -14,11 +14,10 @@ public class MethodInvocation  implements Serializable
 	public Object[] params;
 	public Object returnValue;
 	public Exception thrownExceptions;
-	public int remoteId;
 	public Thread thread;
 	public MethodInvocation[] children;
-	public Method testMethod;
 	public Method checkMethod;
+	public String rule;
 	
 	@Override
 	public String toString() {

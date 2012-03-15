@@ -11,7 +11,7 @@ public class ProcessorTester {
     public static void main(String[] args) {
         ProcessorTester tester = new ProcessorTester();
         System.out.println(tester.findClosestValue(new int[] {1,2,3,1000, 10,1000,40000}, 3));
-        System.out.println(tester.pickFirstString(new String[] {"a","b","c"}));
+        System.out.println(tester.pickFirstString(new String[] {"a","b","c","b","c","b","c","b","c","b","c","b","c","b","c"}));
     }
     @Metamorphic(rule={"findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10) == \\result * 10"//})
 			,"findClosestValue(\\AddNumericConstant(values, 10), target + 10) == \\result + 10"})

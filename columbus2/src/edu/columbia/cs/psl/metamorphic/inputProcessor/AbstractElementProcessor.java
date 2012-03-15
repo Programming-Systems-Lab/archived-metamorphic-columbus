@@ -1,5 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -18,16 +19,19 @@ public abstract class AbstractElementProcessor extends
 		MetamorphicInputProcessor {
 	public abstract String getName();
 
-	public final int[] apply(int[] a, Object... parms)
-	{
-		System.out.println("Hit it at int");
-		return a;
-	}
 	@SuppressWarnings("unchecked")
 	public final <T> T apply(T a, Object... params) throws IllegalArgumentException {
 		if(a.getClass().isArray())
 		{
-			return (T) apply((T[]) a, params);
+			try {
+				T newArray = (T) Array.newInstance(a.getClass().getComponentType(), Array.getLength(a));
+				for (int i = 0; i < Array.getLength(a); i++)
+					Array.set(newArray, i, apply(Array.get(a, i), params));
+		        return newArray;
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException("This metamorphic processor is only defined for arrays",e);
+			}
 		}
 		if(a instanceof List<?>)
 		{

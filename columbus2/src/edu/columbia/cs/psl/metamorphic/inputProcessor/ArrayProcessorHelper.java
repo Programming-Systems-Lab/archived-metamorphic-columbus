@@ -37,7 +37,7 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 		{
 			try {
 				T newArray = (T) Array.newInstance(a.getClass().getComponentType(), Array.getLength(a));
-				apply(a,newArray);
+				applyBetweenArrays(a,newArray);
 		        return newArray;
 			} catch (Exception e) {
 				throw new IllegalArgumentException("This metamorphic processor is only defined for arrays",e);

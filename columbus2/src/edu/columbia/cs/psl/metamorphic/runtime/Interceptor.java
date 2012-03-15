@@ -84,6 +84,7 @@ public class Interceptor extends AbstractInterceptor {
 		{
 			final int k = i;
 			inv.children[i] = new MethodInvocation();
+			inv.children[i].rule = rules[i];
 			try {
 				inv.children[i].method = testerClass.getDeclaredMethod(inv.method.getName()+"_"+i, childTestParamTypes);
 				inv.children[i].checkMethod = testerClass.getDeclaredMethod(inv.method.getName()+"_Check"+i, returnTypes);
@@ -135,7 +136,13 @@ public class Interceptor extends AbstractInterceptor {
 		MethodInvocation inv = invocations.remove(id);
 		inv.returnValue = val;
 		for(MethodInvocation i : inv.children)
+		{
 			i.thread.join();
+			if(((Boolean)i.checkMethod.invoke(null, val,i.returnValue)) == false)
+			{
+				throw new IllegalStateException("Metamorphic property has been violated on " + inv.method +". Rule: [" + i.rule +"]. Outputs were [" + val+"], ["+i.returnValue+"]");
+			}
+		}
 		System.out.println("Invocation result: " + inv);
 		
 		}

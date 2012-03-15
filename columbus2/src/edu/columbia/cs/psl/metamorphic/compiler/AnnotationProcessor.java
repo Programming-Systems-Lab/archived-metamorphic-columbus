@@ -119,7 +119,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 						buf.append("return " + getCastString(m.getReturnType()) + " "+ formatRule(m.getSimpleName().toString(),rule)+";\n");
 						buf.append("\n}");
 						
-						buf.append("public");
+						buf.append("public static ");
 						buf.append(" boolean ");
 						buf.append(m.getSimpleName() + "_Check"+i+" ("+m.getReturnType()+" orig, "+m.getReturnType()+" metamorphic)");
 						buf.append(" {\n");
