@@ -24,7 +24,7 @@ public class SimpleExample implements Cloneable{
   */
 	@Metamorphic(rule={"findClosestValue(\\multiply(values, 10), target * 10) == \\result * 10"//})
 			,"findClosestValue(\\add(values, 10), target + 10) == \\result + 10"})
-  public int findClosestValue(int[] values, int target)
+  private int findClosestValue(int[] values, int target)
   {
 	int distance = 1000000; // start off with a really large distance
 	int closestIndex = -1; // the index of the element that is closest to the target

@@ -85,11 +85,10 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
-
-	private Method getCurMethod(String methodName,String[] types)
+	private Method getMethod(String methodName, String[] types, Class clazz)
 	{
 		try {
-			for(Method m : interceptedObject.getClass().getMethods())
+			for(Method m : clazz.getDeclaredMethods())
 			{
 				boolean ok = true;
 				if(m.getName().equals(methodName))
@@ -102,12 +101,22 @@ public abstract class AbstractInterceptor {
 							ok = false;
 
 					if(ok)
+					{
+						if(!m.isAccessible())
+							m.setAccessible(true);
 						return m;
+					}
 				}
 			}
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
+		if(clazz.getSuperclass() != null)
+			return getMethod(methodName, types, clazz.getSuperclass());
 		return null;
+	}
+	private Method getCurMethod(String methodName,String[] types)
+	{
+		return getMethod(methodName,types,interceptedObject.getClass());
 	}
 }

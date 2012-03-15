@@ -37,6 +37,7 @@ public class Interceptor extends AbstractInterceptor {
 	
 	public int onEnter(Object callee, Method method, Object[] params)
 	{
+		System.out.println("Called " + method);
 		if(isChild(callee))
 			return -1;
 		
@@ -56,11 +57,11 @@ public class Interceptor extends AbstractInterceptor {
 		/**
 		 * Make some changes here to instead apply the requested properties
 		 */
-		String[] rule = method.getAnnotation(Metamorphic.class).rule();
-		for(String r : rule)
-		{
-			System.out.println(r);
-		}
+//		String[] rule = method.getAnnotation(Metamorphic.class).rule();
+//		for(String r : rule)
+//		{
+//			System.out.println(r);
+//		}
 		invocations.put(retId, inv);
 		
 		inv.childThread = new Thread(new Runnable() {
