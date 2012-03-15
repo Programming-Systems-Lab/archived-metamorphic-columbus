@@ -20,7 +20,7 @@ public class MultiplyByNumericConstant extends AbstractElementProcessor {
 			Double d = ((Number) o).doubleValue() * ((Number) params[0]).doubleValue();
 			return returnToOriginalType(d, (Class<? extends Number>) o.getClass());
 		}
-		throw new IllegalArgumentException("Can't multiply a constant and an object value");
+		throw new IllegalArgumentException("Can't multiply a constant and an object value - param was " + o);
 	}
 
 }

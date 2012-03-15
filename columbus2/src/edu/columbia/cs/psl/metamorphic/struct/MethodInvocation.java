@@ -14,12 +14,11 @@ public class MethodInvocation  implements Serializable
 	public Object[] params;
 	public Object returnValue;
 	public Exception thrownExceptions;
-	
-	public Thread childThread;
-	public Object[] childParams;
-	public Object childReturnValue;
-	public Exception childThrownExceptions;
-	public int childRemoteId;
+	public int remoteId;
+	public Thread thread;
+	public MethodInvocation[] children;
+	public Method testMethod;
+	public Method checkMethod;
 	
 	@Override
 	public String toString() {
@@ -30,6 +29,10 @@ public class MethodInvocation  implements Serializable
 			if(v != null)
 			paramStr += v.toString();
 		}
-		return "[Invocation on method "+ (method == null ? "null" : method.getName()) + " with params " + paramStr + " returning " + returnValue +" on object " + callee +". Child params = " + childParams + ", child return = "+childReturnValue+" ]";
+		String childStr = "";
+		if(children != null)
+			for(MethodInvocation i : children)
+				childStr += i.toString() +",";
+		return "[Invocation on method "+ (method == null ? "null" : method.getName()) + " with params " + paramStr + " returning " + returnValue +" on object " + callee +".  Children: ["+childStr+"] ]";
 	}
 }

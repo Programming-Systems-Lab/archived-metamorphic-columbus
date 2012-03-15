@@ -18,8 +18,17 @@ public abstract class AbstractElementProcessor extends
 		MetamorphicInputProcessor {
 	public abstract String getName();
 
+	public final int[] apply(int[] a, Object... parms)
+	{
+		System.out.println("Hit it at int");
+		return a;
+	}
 	@SuppressWarnings("unchecked")
 	public final <T> T apply(T a, Object... params) throws IllegalArgumentException {
+		if(a.getClass().isArray())
+		{
+			return (T) apply((T[]) a, params);
+		}
 		if(a instanceof List<?>)
 		{
 			try {

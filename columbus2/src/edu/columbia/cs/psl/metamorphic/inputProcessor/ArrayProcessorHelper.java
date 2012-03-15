@@ -16,7 +16,7 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 	public <T> T[] apply(T[] a, Object... args) throws IllegalArgumentException 
 	{
 		T[] newArray = (T[]) a.clone();
-		apply(a,newArray);
+		applyBetweenArrays(a,newArray);
         return newArray;
 	}
 	public <T> T apply(T a, Object... args) throws IllegalArgumentException
@@ -46,5 +46,5 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 		throw new IllegalArgumentException("This metamorphic processor is only defined for arrays");
 	}
 	protected abstract <T> void applyToList(List<T> srcList, List<T> destList);
-	protected abstract void apply(Object srcArray, Object destArray);
+	protected abstract void applyBetweenArrays(Object srcArray, Object destArray);
 }

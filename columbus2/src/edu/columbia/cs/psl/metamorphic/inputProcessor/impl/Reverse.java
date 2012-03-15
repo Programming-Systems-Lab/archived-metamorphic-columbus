@@ -14,7 +14,7 @@ public class Reverse extends ArrayProcessorHelper {
 	}
 
 	@Override
-	protected void apply(Object o1, Object o2)
+	protected void applyBetweenArrays(Object o1, Object o2)
 	{
 		for(int i = 0;i < Array.getLength(o1);i++)
 		{

@@ -38,11 +38,7 @@ public class InterceptingClassVisitor extends ClassVisitor {
 	@Override
 	public void visitEnd() {
 		super.visitEnd();
-		for(InterceptingMethodVisitor mv : imvs)
-		{
-			//TODO: Generate the delegate methods to run each test here.
-			System.out.println(mv.getRules());
-		}
+
 		FieldNode fn = new FieldNode(Opcodes.ASM4, Opcodes.ACC_PRIVATE,
 				InterceptingMethodVisitor.INTERCEPTOR_FIELD_NAME,
 				Type.getDescriptor(Interceptor.class), null, null); //TODO: abstract the interceptor type

@@ -22,7 +22,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	public final static String STATIC_INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew_static";
 
 	public final static String INTERCEPTOR_CLASS_NAME = "edu/columbia/cs/psl/metamorphic/runtime/Interceptor";
-	private Class myClass;
 	private Type[] argumentTypes;
 	private int access;
 	
@@ -187,12 +186,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String className;
 	public void setClassName(String className) {
 		this.className = className;
-		try {
-			myClass = getClass().getClassLoader().loadClass(className);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }
