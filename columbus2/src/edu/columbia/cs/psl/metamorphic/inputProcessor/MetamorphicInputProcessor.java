@@ -11,24 +11,10 @@ package edu.columbia.cs.psl.metamorphic.inputProcessor;
  * @see ArrayProcessorHelper
  */
 public abstract class MetamorphicInputProcessor {
-	public abstract <T> T apply(T a) throws IllegalArgumentException;
-	public abstract int apply(int a) throws IllegalArgumentException;
-	public abstract long apply(long a) throws IllegalArgumentException;
-	public abstract boolean apply(boolean a) throws IllegalArgumentException;
-	public abstract float apply(float a) throws IllegalArgumentException;
-	public abstract byte apply(byte a) throws IllegalArgumentException;
-	public abstract char apply(char a) throws IllegalArgumentException;
-	public abstract double apply(double a) throws IllegalArgumentException;
+	public abstract <T> T apply(T a, Object... params) throws IllegalArgumentException;
 
-	public abstract <T> T[] apply(T[] a) throws IllegalArgumentException;
-	public abstract int[] apply(int[] a) throws IllegalArgumentException;
-	public abstract long[] apply(long[] a) throws IllegalArgumentException;
-	public abstract boolean[] apply(boolean[] a) throws IllegalArgumentException;
-	public abstract float[] apply(float[] a) throws IllegalArgumentException;
-	public abstract byte[] apply(byte[] a) throws IllegalArgumentException;
-	public abstract char[] apply(char[] a) throws IllegalArgumentException;
-	public abstract double[] apply(double[] a) throws IllegalArgumentException;
-	
+	public abstract <T> T[] apply(T[] a, Object... params) throws IllegalArgumentException;
+
 	public abstract String getName();
 	
 	public Object[] applyToVariables(Object[] in)

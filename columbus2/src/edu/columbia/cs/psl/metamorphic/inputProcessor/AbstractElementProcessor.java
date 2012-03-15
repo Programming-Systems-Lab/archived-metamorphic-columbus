@@ -19,7 +19,7 @@ public abstract class AbstractElementProcessor extends
 	public abstract String getName();
 
 	@SuppressWarnings("unchecked")
-	public final <T> T apply(T a) throws IllegalArgumentException {
+	public final <T> T apply(T a, Object... params) throws IllegalArgumentException {
 		if(a instanceof List<?>)
 		{
 			try {
@@ -33,87 +33,33 @@ public abstract class AbstractElementProcessor extends
 				throw new IllegalArgumentException("Requested object doesn't have an accesible constructor", e);
 			}
 		}
-		else if(a instanceof Integer)
-			return (T) Integer.valueOf(apply(((Integer) a).intValue()));
-		else if(a instanceof Boolean)
-			return (T) Boolean.valueOf(apply(((Boolean) a).booleanValue()));
-		else if(a instanceof Byte)
-			return (T)  Byte.valueOf(apply((( Byte) a).byteValue()));
-		else if(a instanceof Character)
-			return (T) Character.valueOf(apply(((Character) a).charValue()));
-		else if(a instanceof Double)
-			return (T) Double.valueOf(apply(((Double) a).doubleValue()));
-		else if(a instanceof Float)
-			return (T) Float.valueOf(apply(((Float) a).floatValue()));
-		else if(a instanceof Long)
-			return (T) Long.valueOf(apply(((Long) a).longValue()));
-		return (T) applyToNonListObject(a);
+		return (T) applyToNonListObject(a,params);
 	}
 	
-	protected abstract Object applyToNonListObject(Object o);
+	protected abstract Object applyToNonListObject(Object o, Object... params);
 	
-	public <T> T[] apply(T[] a) throws IllegalArgumentException
+	public <T> T[] apply(T[] a, Object... params) throws IllegalArgumentException
 			 {
 		T[] ret = a.clone();
 		for (int i = 0; i < ret.length; i++)
 			ret[i] = apply(a[i]);
 		return ret;
 	}
-
-	public int[] apply(int[] a) throws IllegalArgumentException
-			 {
-		int[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-
-	}
-
-	public long[] apply(long[] a) throws IllegalArgumentException
-			 {
-		long[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-	}
-
-	public boolean[] apply(boolean[] a) throws IllegalArgumentException
-			 {
-		boolean[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-	}
-
-	public float[] apply(float[] a) throws IllegalArgumentException
-			 {
-		float[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-	}
-
-	public byte[] apply(byte[] a) throws IllegalArgumentException
-			 {
-		byte[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-	}
-
-	public char[] apply(char[] a) throws IllegalArgumentException
-			 {
-		char[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
-	}
-
-	public double[] apply(double[] a) throws IllegalArgumentException
-			 {
-		double[] ret = a.clone();
-		for (int i = 0; i < ret.length; i++)
-			ret[i] = apply(a[i]);
-		return ret;
+	
+	public Number returnToOriginalType(Number n, Class<? extends Number> clazz)
+	{
+		if(clazz.equals(Double.class) || clazz.equals(Double.TYPE))
+			return n.doubleValue();
+		if(clazz.equals(Integer.class) || clazz.equals(Integer.TYPE))
+			return n.intValue();
+		if(clazz.equals(Short.class) || clazz.equals(Short.TYPE))
+			return n.shortValue();
+		if(clazz.equals(Float.class) || clazz.equals(Float.TYPE))
+			return n.floatValue();
+		if(clazz.equals(Byte.class) || clazz.equals(Byte.TYPE))
+			return n.byteValue();
+		if(clazz.equals(Long.class) || clazz.equals(Long.TYPE))
+			return n.longValue();
+		return null;
 	}
 }
