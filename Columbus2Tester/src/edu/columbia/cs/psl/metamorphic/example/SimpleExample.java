@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 
 @Metamorphic
 public class SimpleExample implements Cloneable{
@@ -18,13 +19,15 @@ public class SimpleExample implements Cloneable{
     @meta findClosestValue(\add(values, 10), target + 10) == \result + 10
     @meta findClosestValue(\shuffle(values), target) == \result
   */
-	@Metamorphic(rule={"findClosestValue(\\multiply(values, 10), target * 10) == \\result * 10"//})
-			,"findClosestValue(\\add(values, 10), target + 10) == \\result + 10"})
+	 @Metamorphic(rules = {
+	    		@Rule(test ="findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10)", check = "\\result * 10"),
+	    		@Rule(test ="findClosestValue(\\AddNumericConstant(values, 10), target + 10)", check = "\\result + 10", checkMethod = ">=")
+	    }
+	    	)
   private int findClosestValue(int[] values, int target)
   {
 	int distance = 1000000; // start off with a really large distance
 	int closestIndex = -1; // the index of the element that is closest to the target
-
 	for (int i = 0; i < values.length; i++)
 	{
 	    // check the difference between the values and compare it to the distance
@@ -40,7 +43,7 @@ public class SimpleExample implements Cloneable{
 	return values[closestIndex];
   }
 
-	@Metamorphic(rule="billBob(\\suffle(in3) == \"def\"")
+//	@Metamorphic(rule="billBob(\\suffle(in3) == \"def\"")
 	public String go(String[] in3)
 	{
 		if(in3.length > 0)

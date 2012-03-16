@@ -3,6 +3,8 @@ package edu.columbia.cs.psl.metamorphic.struct;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
+
 public class MethodInvocation  implements Serializable
 {
 	/**
@@ -17,7 +19,7 @@ public class MethodInvocation  implements Serializable
 	public Thread thread;
 	public MethodInvocation[] children;
 	public Method checkMethod;
-	public String rule;
+	public Rule rule;
 	
 	@Override
 	public String toString() {

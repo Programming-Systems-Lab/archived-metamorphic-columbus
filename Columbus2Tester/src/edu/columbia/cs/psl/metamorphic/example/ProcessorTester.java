@@ -1,6 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.example;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 
 @Metamorphic
 public class ProcessorTester {
@@ -11,8 +12,11 @@ public class ProcessorTester {
         SimpleExample ex2 = new SimpleExample();
         ex2.go(new String[] {"d"});
     }
-    @Metamorphic(rule={"findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10) == \\result * 10"//})
-			,"findClosestValue(\\AddNumericConstant(values, 10), target + 10) == \\result + 10"})
+    @Metamorphic(rules = {
+    		@Rule(test ="findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10)", check = "\\result * 10"),
+    		@Rule(test ="findClosestValue(\\AddNumericConstant(values, 10), target + 10)", check = "\\result + 10")
+    }
+    	)
   private int findClosestValue(int values[], int target)
   {
 	int distance = 1000000; // start off with a really large distance
@@ -33,7 +37,8 @@ public class ProcessorTester {
 	// this will give an error if the array is empty, but whatever... =)
 	return values[closestIndex];
   }
-    @Metamorphic(rule={"pickFirstString(\\Shuffle(in)) == \\result"})
+    @Metamorphic(rules = {
+    		@Rule(test = "pickFirstString(\\Shuffle(in))", check="\\result")})
     private String pickFirstString(String[] in)
 	{
 		return in[0];

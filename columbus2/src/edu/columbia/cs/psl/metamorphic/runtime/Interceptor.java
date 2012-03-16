@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.rits.cloning.Cloner;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
 
 /**
@@ -58,7 +59,7 @@ public class Interceptor extends AbstractInterceptor {
 		/**
 		 * Make some changes here to instead apply the requested properties
 		 */
-		String[] rules = method.getAnnotation(Metamorphic.class).rule();
+		Rule[] rules = method.getAnnotation(Metamorphic.class).rules();
 		Class<?>[] childTestParamTypes = new Class[params.length + 2];
 		Object[] childParams = new Object[params.length + 2];
 		for(int i = 0; i< params.length; i++)

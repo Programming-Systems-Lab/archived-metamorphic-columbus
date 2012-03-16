@@ -21,8 +21,11 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
+
 import javax.tools.Diagnostic;
 
 @SupportedAnnotationTypes("edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic")
@@ -83,7 +86,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 	}
 	private void raiseError(String msg, Element source)
 	{
-		this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unparsable metamorphic rule", source);
+		this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Metamorphic error: " + msg, source);
 		errorRaised = true;
 	}
 	private HashMap<TypeElement, AnnotatedClass> classFiles;
@@ -107,7 +110,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 				buf.append("public class " + c.getClazz().getSimpleName() + "_tests {\n");
 				for (ExecutableElement m : c.getMethods()) {
 					int i = 0;
-					for (String rule : m.getAnnotation(Metamorphic.class).rule()) {
+					for (Rule rule : m.getAnnotation(Metamorphic.class).rules()) {
 						buf.append("public static ");
 						buf.append(" " + m.getReturnType() + " ");
 						buf.append(m.getSimpleName() + "_" + i + " (");
@@ -139,7 +142,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 						if (!m.getReturnType().getKind().isPrimitive())
 							buf.append("if(orig == null && metamorphic != null) return false; if(orig == null && metamorphic == null) return true;");
 
-						formattedRule = formatRuleCheck(m.getSimpleName().toString(), rule, m.getReturnType());
+						formattedRule = formatRuleCheck(m, rule, m.getReturnType());
 
 						if (formattedRule == null || formattedRule.length() < 1)
 							raiseError("Missing ==", m);
@@ -177,33 +180,47 @@ public class AnnotationProcessor extends AbstractProcessor {
 		return "(Object)";
 	}
 
-	private String formatRule(String methodName, String rule) throws Exception {
-		rule = rule.replaceAll(methodName + "\\(",
-				Constants.TEST_METHOD_PARAM_NAME + ".invoke(" + Constants.TEST_OBJECT_PARAM_NAME + (rule.contains(methodName + "()") ? "" : ","));
-		if (!rule.contains("=="))
-			return null;
-		rule = rule.substring(0, rule.indexOf("=="));
+	private String formatRule(String methodName, Rule rule) throws Exception {
+		String left = rule.test();
+		left = left.replaceAll(methodName + "\\(",
+				Constants.TEST_METHOD_PARAM_NAME + ".invoke(" + Constants.TEST_OBJECT_PARAM_NAME + (left.contains(methodName + "()") ? "" : ","));
+		
 		Pattern p = Pattern.compile("\\\\([^(]+)\\(");
-		Matcher m = p.matcher(rule);
-		rule = m.replaceAll("new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.$1().apply((Object) ");
-		// rule = rule.replaceAll("\\\\([^(]+)",
-		// "edu.columbia.cs.psl.metamorphic.inputProcessor.impl.");
-		return rule;
+		Matcher m = p.matcher(left);
+		left = m.replaceAll("new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.$1().apply((Object) ");
+
+		return left;
 	}
 
-	private String formatRuleCheck(String methodName, String rule, TypeMirror returnType) throws Exception {
-		if (!rule.contains("=="))
-			return null;
-		rule = rule.substring(rule.indexOf("==") + 2);
-		rule = rule.replace("\\result", "orig");
-		if (returnType.getKind().isPrimitive())
-			rule = "metamorphic == " + rule + ";";
-		else
-			rule = "metamorphic.equals(" + rule + ");";
+	private String formatRuleCheck(ExecutableElement method, Rule rule, TypeMirror returnType) throws Exception {
+		String right = rule.check();
+		
+		right = right.replace("\\result", "orig");
+		if(rule.checkMethod().equals("==") || rule.checkMethod().equals(">=") || rule.checkMethod().equals("<=")  || rule.checkMethod().equals("<")  || rule.checkMethod().equals(">") || rule.checkMethod().equals("!="))
+		{
+			if (returnType.getKind().isPrimitive())
+				right = "metamorphic " + rule.checkMethod() + " " + right + ";";
+			else
+			{
+				//check here that that the type is comparable
+				
+				if(rule.checkMethod().equals("!="))
+					right = "! metamorphic.equals(" + right + ");";
+				else if(rule.checkMethod().equals("=="))
+					right = "metamorphic.equals(" + right + ");";
+				else
+				{
+					if(this.processingEnv.getTypeUtils().isSubtype(returnType, this.processingEnv.getElementUtils().getTypeElement(Comparable.class.getName()).asType()))
+						right = "metamorphic.compareTo(" + right + ") " +rule.checkMethod()+ " 0;";
+					else
+						raiseError("Check method indicates a "+rule.checkMethod() +" check operation, but the return type (" +returnType+") is not Comparable", method);
+				}
+			}
+		}
 		// rule = rule.replaceAll(methodName+"(",
 		// Constants.TEST_METHOD_PARAM_NAME+".invoke("+Constants.TEST_OBJECT_PARAM_NAME+(rule.contains(methodName+"()")
 		// ? "" : ","));
-		return rule;
+		return right;
 	}
 
 }
