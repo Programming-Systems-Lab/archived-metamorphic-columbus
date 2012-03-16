@@ -1,11 +1,8 @@
 package edu.columbia.cs.psl.metamorphic.runtime.visitor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

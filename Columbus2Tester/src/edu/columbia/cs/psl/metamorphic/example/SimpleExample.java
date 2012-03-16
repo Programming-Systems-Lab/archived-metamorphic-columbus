@@ -1,12 +1,9 @@
 package edu.columbia.cs.psl.metamorphic.example;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 
 @Metamorphic

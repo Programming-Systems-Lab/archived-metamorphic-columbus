@@ -1,10 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.compiler;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -14,22 +11,16 @@ import java.util.regex.Pattern;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 

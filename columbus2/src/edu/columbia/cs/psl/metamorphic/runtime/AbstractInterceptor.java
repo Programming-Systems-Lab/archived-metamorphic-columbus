@@ -1,10 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import org.objectweb.asm.Type;
 
 import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
 

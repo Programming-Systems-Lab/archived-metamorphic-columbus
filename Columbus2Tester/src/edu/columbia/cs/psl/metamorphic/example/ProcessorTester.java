@@ -1,9 +1,5 @@
 package edu.columbia.cs.psl.metamorphic.example;
 
-import java.util.ServiceLoader;
-
-import javax.annotation.processing.Processor;
-
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 
 @Metamorphic
