@@ -14,6 +14,7 @@ public class MethodInvocation  implements Serializable
 	public Object callee;
 	public Method method;
 	public Object[] params;
+	public Object[] params_cloned;
 	public Object returnValue;
 	public Exception thrownExceptions;
 	public Thread thread;

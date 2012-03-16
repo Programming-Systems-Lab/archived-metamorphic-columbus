@@ -119,7 +119,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 				errorRaised = false;
 
 				// PrintStream bw = System.out;
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append("package ");
 				buf.append(((PackageElement) c.getClazz().getEnclosingElement()).getQualifiedName());
 				buf.append(";\n");
@@ -130,13 +130,22 @@ public class AnnotationProcessor extends AbstractProcessor {
 						buf.append("public static ");
 						buf.append(" " + m.getReturnType() + " ");
 						buf.append(m.getSimpleName() + "_" + i + " (");
+						StringBuilder realParams = new StringBuilder();
+						
 						for (VariableElement param : m.getParameters()) {
 							String type = param.asType().toString();
 							if (param.asType().getKind().isPrimitive()) {
 								type = Constants.primitiveToObject.get(type);
 							}
-							buf.append(toString(param.getModifiers()) + " " + type + " " + param.getSimpleName() + ", ");
+							realParams.append(toString(param.getModifiers()));
+							realParams.append(" ");
+							realParams.append(type);
+							realParams.append(" ");
+							realParams.append(param.getSimpleName());
+							realParams.append(", ");
 						}
+						
+						buf.append(realParams);
 						buf.append(c.getClazz().getSimpleName() + " " + Constants.TEST_OBJECT_PARAM_NAME + ", java.lang.reflect.Method "
 								+ Constants.TEST_METHOD_PARAM_NAME);
 						buf.append(") throws Exception {\n");
@@ -153,7 +162,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
 						buf.append("public static ");
 						buf.append(" boolean ");
-						buf.append(m.getSimpleName() + "_Check" + i + " (" + m.getReturnType() + " orig, " + m.getReturnType() + " metamorphic)");
+						buf.append(m.getSimpleName() + "_Check" + i + " (" + m.getReturnType() + " orig, " + m.getReturnType() + " metamorphic"+ (realParams.length() > 0 ? ","+realParams.substring(0,realParams.length()-2) : "")+")");
 						buf.append(" {\n");
 						if (!m.getReturnType().getKind().isPrimitive())
 							buf.append("if(orig == null && metamorphic != null) return false; if(orig == null && metamorphic == null) return true;");
