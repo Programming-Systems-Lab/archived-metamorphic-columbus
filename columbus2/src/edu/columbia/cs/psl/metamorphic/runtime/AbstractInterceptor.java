@@ -109,7 +109,7 @@ public abstract class AbstractInterceptor {
 		}
 		if(clazz.getSuperclass() != null)
 			return getMethod(methodName, params, clazz.getSuperclass());
-		throw new NoSuchMethodException(clazz.getCanonicalName() +"."+methodName + "("+ implode(params) + ")");
+		throw new NoSuchMethodException(methodName + "("+ implode(params) + ")");
 	}
 	private String implode(Object[] array)
 	{
