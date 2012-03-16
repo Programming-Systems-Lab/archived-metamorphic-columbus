@@ -33,6 +33,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if(desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;"))
 		{
+			classVisitor.setShouldRewrite();
 			rewrite = true;
 		}
 		return super.visitAnnotation(desc, visible);
@@ -124,6 +125,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	int refIdForInterceptor;
 	@Override
 	protected void onMethodEnter() {
+		super.onMethodEnter();
 		if(!rewrite)
 			return;
 		if ((access & Opcodes.ACC_STATIC) != 0)
@@ -139,6 +141,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 		super.visitMaxs(maxStack, maxLocals);
 	}
 	public void onMethodExit(int opcode) {
+		super.onMethodExit(opcode);
 		if(!rewrite)
 			return;
 
@@ -172,6 +175,11 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String className;
 	public void setClassName(String className) {
 		this.className = className;
+	}
+	private InterceptingClassVisitor classVisitor;
+	public void setClassVisitor(
+			InterceptingClassVisitor interceptingClassVisitor) {
+		classVisitor = interceptingClassVisitor;
 	}
 
 }

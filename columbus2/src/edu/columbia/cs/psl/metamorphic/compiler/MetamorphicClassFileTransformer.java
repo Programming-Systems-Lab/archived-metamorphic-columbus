@@ -18,9 +18,9 @@ public class MetamorphicClassFileTransformer implements ClassFileTransformer {
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
 			byte[] classfileBuffer) throws IllegalClassFormatException {
 		String name = className.replace("/", ".");
-		if(name.startsWith("edu.columbia.cs.psl.metamorphic.example"))
+		if(!name.startsWith("java"))
 		{			
-			logger.info("Rewriting " + name);
+			logger.debug("Possibly rewriting " + name);
 			ClassReader cr = new ClassReader(classfileBuffer);
 			  ClassWriter cw = new ClassWriter(cr,
 		     ClassWriter.COMPUTE_MAXS |
