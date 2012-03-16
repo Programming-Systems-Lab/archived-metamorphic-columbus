@@ -1,12 +1,12 @@
 package edu.columbia.cs.psl.metamorphic.example;
 public class ProcessorTester_tests {
-public static  int findClosestValue_0 ( int[] values,  java.lang.Integer target, ProcessorTester ___object, java.lang.reflect.Method ___method) throws Exception {
+public static  int findClosestValue_0 ( int[] values,  Integer target, ProcessorTester ___object, java.lang.reflect.Method ___method) throws Exception {
 return (Integer) ___method.invoke(___object,new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.MultiplyByNumericConstant().apply((Object) values, 10), target * 10) ;
 
 }public static  boolean findClosestValue_Check0 (int orig, int metamorphic) {
 return metamorphic ==  orig * 10;
 
-}public static  int findClosestValue_1 ( int[] values,  java.lang.Integer target, ProcessorTester ___object, java.lang.reflect.Method ___method) throws Exception {
+}public static  int findClosestValue_1 ( int[] values,  Integer target, ProcessorTester ___object, java.lang.reflect.Method ___method) throws Exception {
 return (Integer) ___method.invoke(___object,new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.AddNumericConstant().apply((Object) values, 10), target + 10) ;
 
 }public static  boolean findClosestValue_Check1 (int orig, int metamorphic) {

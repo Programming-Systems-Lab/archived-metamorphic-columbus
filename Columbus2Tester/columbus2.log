@@ -393,3 +393,5 @@
 [columbus2 - Thread-0 (2012-03-15 23:43:08,538)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(35) | Skipping java.util.Collections$UnmodifiableMap
 [columbus2 - main (2012-03-15 23:43:35,482)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(23) | Rewriting edu.columbia.cs.psl.metamorphic.example.ProcessorTester
 [columbus2 - main (2012-03-15 23:43:35,551)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(23) | Rewriting edu.columbia.cs.psl.metamorphic.example.ProcessorTester_tests
+[columbus2 - main (2012-03-16 11:03:08,218)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(23) | Rewriting edu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 11:03:08,287)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(23) | Rewriting edu.columbia.cs.psl.metamorphic.example.ProcessorTester_tests

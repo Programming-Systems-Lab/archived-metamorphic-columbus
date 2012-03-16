@@ -102,7 +102,12 @@ public class AnnotationProcessor extends AbstractProcessor {
 						buf.append(m.getSimpleName() + "_"+i+" (");
 						for(VariableElement param : m.getParameters())
 						{
-							buf.append(toString(param.getModifiers())+ " " + param.asType().toString() +  " " + param.getSimpleName() + ", ");
+							String type = param.asType().toString();
+							if(param.asType().getKind().isPrimitive())
+							{
+								type = Constants.primitiveToObject.get(type);
+							}
+							buf.append(toString(param.getModifiers())+ " " + type +  " " + param.getSimpleName() + ", ");
 						}
 						buf.append(c.getClazz().getSimpleName() + " " + Constants.TEST_OBJECT_PARAM_NAME+", java.lang.reflect.Method "+Constants.TEST_METHOD_PARAM_NAME);
 						buf.append(") throws Exception {\n");

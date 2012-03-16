@@ -11,7 +11,7 @@ public class ProcessorTester {
     }
     @Metamorphic(rule={"findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10) == \\result * 10"//})
 			,"findClosestValue(\\AddNumericConstant(values, 10), target + 10) == \\result + 10"})
-  private int findClosestValue(int values[], Integer target)
+  private int findClosestValue(int values[], int target)
   {
 	int distance = 1000000; // start off with a really large distance
 	int closestIndex = -1; // the index of the element that is closest to the target
