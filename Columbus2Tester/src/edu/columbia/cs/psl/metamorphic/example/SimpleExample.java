@@ -24,7 +24,7 @@ public class SimpleExample implements Cloneable{
 	    		@Rule(test ="findClosestValue(\\AddNumericConstant(values, 10), target + 10)", check = "\\result + 10", checkMethod = ">=")
 	    }
 	    	 )
-  private int findClosestValue(int[] values, int target)
+  public int findClosestValue(int[] values, int target)
   {
 	int distance = 1000000; // start off with a really large distance
 	int closestIndex = -1; // the index of the element that is closest to the target
