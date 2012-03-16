@@ -90,8 +90,8 @@ public class Interceptor extends AbstractInterceptor {
 			inv.children[i] = new MethodInvocation();
 			inv.children[i].rule = rules[i];
 			try {
-				inv.children[i].method = testerClass.getDeclaredMethod(inv.method.getName()+"_"+i, childTestParamTypes);
-				inv.children[i].checkMethod = testerClass.getDeclaredMethod(inv.method.getName()+"_Check"+i, checkTypes);
+				inv.children[i].method = getMethod(inv.method.getName()+"_"+i, childTestParamTypes,testerClass);
+				inv.children[i].checkMethod = getMethod(inv.method.getName()+"_Check"+i, checkTypes,testerClass);
 //				System.out.println(inv.children[i].checkMethod);
 				inv.children[i].params = childParams;
 			} catch (SecurityException e1) {

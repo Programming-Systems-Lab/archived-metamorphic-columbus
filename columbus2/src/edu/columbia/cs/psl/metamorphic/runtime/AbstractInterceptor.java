@@ -81,6 +81,48 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
+	protected Method getMethod(String methodName, Class<?>[] params, Class<?> clazz) throws NoSuchMethodException
+	{
+		try {
+			for(Method m : clazz.getDeclaredMethods())
+			{
+				boolean ok = true;
+				if(m.getName().equals(methodName))
+				{
+					Class<?>[] mArgs = m.getParameterTypes();
+					if(mArgs.length != params.length)
+						break;
+					for(int i = 0;i<mArgs.length;i++)
+						if(!mArgs[i].isAssignableFrom(params[i]))
+							ok = false;
+
+					if(ok)
+					{
+						if(!m.isAccessible())
+							m.setAccessible(true);
+						return m;
+					}
+				}
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		if(clazz.getSuperclass() != null)
+			return getMethod(methodName, params, clazz.getSuperclass());
+		throw new NoSuchMethodException(clazz.getCanonicalName() +"."+methodName + "("+ implode(params) + ")");
+	}
+	private String implode(Object[] array)
+	{
+		StringBuilder ret = new StringBuilder();
+		if(array == null || array.length == 0)
+			return "";
+		for(Object o : array)
+		{
+			ret.append(o);
+			ret.append(", ");
+		}
+		return ret.substring(0, ret.length()-2);
+	}
 	private Method getMethod(String methodName, String[] types, Class<?> clazz)
 	{
 		try {
