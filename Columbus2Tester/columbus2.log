@@ -531,3 +531,5 @@
 [columbus2 - Reference Handler (2012-03-16 11:10:47,488)] INFO edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer.transform(23) | Rewriting sun.misc.Cleaner
 [columbus2 - main (2012-03-16 11:12:26,363)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
 [columbus2 - main (2012-03-16 11:12:35,301)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 11:14:07,824)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 11:14:08,483)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.SimpleExample

@@ -10,7 +10,7 @@ public class AnnotatedClass {
 	private TypeElement clazz;
 	private ArrayList<ExecutableElement> methods;
 	private JavaFileObject jfo;
-	
+
 	public JavaFileObject getJfo() {
 		return jfo;
 	}

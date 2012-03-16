@@ -8,6 +8,8 @@ public class ProcessorTester {
         ProcessorTester tester = new ProcessorTester();
         System.out.println(tester.findClosestValue(new int[] {1,2,3,1000, 10,1000,40000}, 3));
         System.out.println(tester.pickFirstString(new String[] {"a","b","c","b","c","b","c","b","c","b","c","b","c","b","c"}));
+        SimpleExample ex2 = new SimpleExample();
+        ex2.go(new String[] {"d"});
     }
     @Metamorphic(rule={"findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10) == \\result * 10"//})
 			,"findClosestValue(\\AddNumericConstant(values, 10), target + 10) == \\result + 10"})

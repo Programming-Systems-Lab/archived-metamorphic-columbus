@@ -40,7 +40,7 @@ public class SimpleExample implements Cloneable{
 	return values[closestIndex];
   }
 
-	@Metamorphic(rule="foo")
+	@Metamorphic(rule="billBob(\\suffle(in3) == \"def\"")
 	public String go(String[] in3)
 	{
 		if(in3.length > 0)
