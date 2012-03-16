@@ -13,69 +13,13 @@ import java.util.List;
  *
  */
 public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
-	public <T> T[] apply(T[] a) throws IllegalArgumentException 
+	public <T> T[] apply(T[] a, Object... args) throws IllegalArgumentException 
 	{
 		T[] newArray = (T[]) a.clone();
-		apply(a,newArray);
+		applyBetweenArrays(a,newArray);
         return newArray;
 	}
-	@Override
-	public boolean[] apply(boolean[] a) throws IllegalArgumentException
-			 {
-		boolean[] newArray = (boolean[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-
-	}
-
-	@Override
-	public int[] apply(int[] a) throws IllegalArgumentException
-			 {
-		int[] newArray = (int[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-
-	@Override
-	public long[] apply(long[] a) throws IllegalArgumentException
-			 {
-		long[] newArray = (long[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-
-	@Override
-	public float[] apply(float[] a) throws IllegalArgumentException
-			 {
-		float[] newArray = (float[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-
-	@Override
-	public byte[] apply(byte[] a) throws IllegalArgumentException
-			 {
-		byte[] newArray = (byte[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-
-	@Override
-	public char[] apply(char[] a) throws IllegalArgumentException
-			 {
-		char[] newArray = (char[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-
-	@Override
-	public double[] apply(double[] a) throws IllegalArgumentException
-			 {
-		double[] newArray = (double[]) a.clone();
-		apply(a,newArray);
-        return newArray;
-	}
-	public <T> T apply(T a) throws IllegalArgumentException
+	public <T> T apply(T a, Object... args) throws IllegalArgumentException
 	{
 		if(a instanceof List<?>)
 		{
@@ -93,7 +37,7 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 		{
 			try {
 				T newArray = (T) Array.newInstance(a.getClass().getComponentType(), Array.getLength(a));
-				apply(a,newArray);
+				applyBetweenArrays(a,newArray);
 		        return newArray;
 			} catch (Exception e) {
 				throw new IllegalArgumentException("This metamorphic processor is only defined for arrays",e);
@@ -102,5 +46,5 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 		throw new IllegalArgumentException("This metamorphic processor is only defined for arrays");
 	}
 	protected abstract <T> void applyToList(List<T> srcList, List<T> destList);
-	protected abstract void apply(Object srcArray, Object destArray);
+	protected abstract void applyBetweenArrays(Object srcArray, Object destArray);
 }
