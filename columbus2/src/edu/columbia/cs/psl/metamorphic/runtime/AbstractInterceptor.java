@@ -81,7 +81,11 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
-	protected Method getMethod(String methodName, Class<?>[] params, Class<?> clazz) throws NoSuchMethodException
+	protected Method getMethod(String methodName,Class<?>[] params, Class<?> clazz) throws NoSuchMethodException
+	{
+		return getMethod(methodName, params, clazz, clazz);
+	}
+	protected Method getMethod(String methodName, Class<?>[] params, Class<?> clazz, Class<?> originalClazz) throws NoSuchMethodException
 	{
 		try {
 			for(Method m : clazz.getDeclaredMethods())
@@ -108,8 +112,8 @@ public abstract class AbstractInterceptor {
 			e.printStackTrace();
 		}
 		if(clazz.getSuperclass() != null)
-			return getMethod(methodName, params, clazz.getSuperclass());
-		throw new NoSuchMethodException(methodName + "("+ implode(params) + ")");
+			return getMethod(methodName, params, clazz.getSuperclass(),originalClazz);
+		throw new NoSuchMethodException(originalClazz.getCanonicalName() +"."+methodName + "("+ implode(params) + ")");
 	}
 	private String implode(Object[] array)
 	{
