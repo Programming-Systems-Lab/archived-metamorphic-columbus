@@ -24,7 +24,7 @@ import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
 public class Interceptor extends AbstractInterceptor {
 	private HashMap<Integer, MethodInvocation> invocations = new HashMap<Integer, MethodInvocation>();
 	private Integer invocationId = 0;
-	private Class testerClass;
+	private Class<?> testerClass;
 	
 	private Logger logger = Logger.getLogger(Interceptor.class);
 	public Interceptor(Object intercepted) {
@@ -59,7 +59,7 @@ public class Interceptor extends AbstractInterceptor {
 		 * Make some changes here to instead apply the requested properties
 		 */
 		String[] rules = method.getAnnotation(Metamorphic.class).rule();
-		Class[] childTestParamTypes = new Class[params.length + 2];
+		Class<?>[] childTestParamTypes = new Class[params.length + 2];
 		Object[] childParams = new Object[params.length + 2];
 		for(int i = 0; i< params.length; i++)
 		{
@@ -72,7 +72,7 @@ public class Interceptor extends AbstractInterceptor {
 		childTestParamTypes[params.length] = callee.getClass();
 		childTestParamTypes[params.length+1] = Method.class;
 		
-		Class[] returnTypes = new Class[2];
+		Class<?>[] returnTypes = new Class[2];
 		returnTypes[0] = method.getReturnType();
 		returnTypes[1] = method.getReturnType();
 		

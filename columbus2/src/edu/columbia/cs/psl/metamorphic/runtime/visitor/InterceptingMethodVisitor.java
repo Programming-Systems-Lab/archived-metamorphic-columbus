@@ -12,9 +12,7 @@ import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 
 public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String name;
-	private int api;
-	private Label timeVarStart = new Label();
-	private Label timeVarEnd = new Label();
+
 	public final static String INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew";
 	public final static String STATIC_INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew_static";
 
@@ -26,7 +24,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 			String name, String desc) {
 		super(api, mv, access, name, desc);
 		this.name = name;
-		this.api = api;
 		this.access = access;
 		this.argumentTypes = Type.getArgumentTypes(desc);
 	}
@@ -139,7 +136,6 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 
 	@Override
 	public void visitMaxs(int maxStack, int maxLocals) {
-		visitLabel(timeVarEnd);
 		super.visitMaxs(maxStack, maxLocals);
 	}
 	public void onMethodExit(int opcode) {

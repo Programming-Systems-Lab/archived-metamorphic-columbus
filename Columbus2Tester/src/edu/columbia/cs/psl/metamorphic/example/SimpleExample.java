@@ -8,7 +8,6 @@ import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 
 @Metamorphic
 public class SimpleExample implements Cloneable{
-	private int foo = 0;
 	public SimpleExample() {
 		somethingAnnoying = new HashSet<ArrayList<SimpleExample>>();
 		somethingAnnoying.add(new ArrayList<SimpleExample>());
@@ -53,8 +52,8 @@ public class SimpleExample implements Cloneable{
 	public static void main(String[] args) {
 		System.out.println(new SimpleExample().go(new String[] {"First","Second","Third","Fourth"}));
 //		System.out.println(SimpleExample.findClosestValue(new int[] {1,2,3,4,1000,10000,30000}, 300));
-		int[] values = new int[] {1,32,34};
-		int target = 3;
+//		int[] values = new int[] {1,32,34};
+//		int target = 3;
 		SimpleExample s = new SimpleExample();
 		System.out.println(s.findClosestValue(new int[] {1,2,3,4,100,1000,2000,40000,10000}, 100));
 //		

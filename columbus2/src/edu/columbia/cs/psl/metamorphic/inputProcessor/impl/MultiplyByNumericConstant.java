@@ -13,6 +13,7 @@ public class MultiplyByNumericConstant extends AbstractElementProcessor {
 		return "Multiplies by a constant";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Object applyToNonListObject(Object o, Object... params) {
 		if(Number.class.isAssignableFrom(o.getClass()))

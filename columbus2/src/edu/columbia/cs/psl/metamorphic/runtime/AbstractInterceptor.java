@@ -81,7 +81,7 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
-	private Method getMethod(String methodName, String[] types, Class clazz)
+	private Method getMethod(String methodName, String[] types, Class<?> clazz)
 	{
 		try {
 			for(Method m : clazz.getDeclaredMethods())
@@ -89,7 +89,7 @@ public abstract class AbstractInterceptor {
 				boolean ok = true;
 				if(m.getName().equals(methodName))
 				{
-					Class[] mArgs = m.getParameterTypes();
+					Class<?>[] mArgs = m.getParameterTypes();
 					if(mArgs.length != types.length)
 						break;
 					for(int i = 0;i<mArgs.length;i++)
