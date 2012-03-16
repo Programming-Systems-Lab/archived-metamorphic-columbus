@@ -23,7 +23,7 @@ public class SimpleExample implements Cloneable{
 	    		@Rule(test ="findClosestValue(\\MultiplyByNumericConstant(values, 10), target * 10)", check = "\\result * 10"),
 	    		@Rule(test ="findClosestValue(\\AddNumericConstant(values, 10), target + 10)", check = "\\result + 10", checkMethod = ">=")
 	    }
-	    	)
+	    	 )
   private int findClosestValue(int[] values, int target)
   {
 	int distance = 1000000; // start off with a really large distance

@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,10 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
@@ -30,13 +34,8 @@ import javax.tools.Diagnostic;
 
 @SupportedAnnotationTypes("edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-// @SupportedOptions( { AnnotationProcessor.OPT_VERBOSE,
-// AnnotationProcessor.OPT_CLASSPATH})
 public class AnnotationProcessor extends AbstractProcessor {
-	// protected static final String OPT_VERBOSE = "verbose";
-	// protected static final String OPT_CLASSPATH = "cp";
-	// private final MetamorphicTestCompiler fCompiler =
-	// MetamorphicTestCompiler.getInstance();
+
 	private TypeElement getEnclosingClass(Element e) {
 		if (e instanceof TypeElement)
 			if (((TypeElement) e).getEnclosingElement() instanceof PackageElement)
@@ -63,7 +62,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 					}
 				}
 
-				if (element instanceof ExecutableElement) {
+				if (element.getKind().equals(ElementKind.METHOD)) {
 					// this is a method
 					AnnotatedClass ac = classFiles.get(getEnclosingClass(element));
 					ac.getMethods().add(((ExecutableElement) element));
@@ -76,7 +75,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 		return true;
 	}
 
-	private boolean errorRaised= false;
+	private boolean	errorRaised	= false;
+
 	private String toString(Set<Modifier> modifiers) {
 		StringBuilder buf = new StringBuilder();
 		for (Modifier mod : modifiers) {
@@ -84,12 +84,28 @@ public class AnnotationProcessor extends AbstractProcessor {
 		}
 		return buf.substring(0, (buf.length() > 1 ? buf.length() - 1 : 0)).toString();
 	}
-	private void raiseError(String msg, Element source)
-	{
+
+	private void raiseError(String msg, ExecutableElement method, int ruleIndex, String type) {
+		try {
+			for (AnnotationMirror am : processingEnv.getElementUtils().getAllAnnotationMirrors(((ExecutableElement) method))) {
+				if (!processingEnv.getElementUtils().getTypeElement(Metamorphic.class.getName()).equals(am.getAnnotationType().asElement()))
+					continue;
+				this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Metamorphic error: " + msg, method, am);
+				return;
+			}
+		} catch (Exception ex) {
+			raiseError(ex.getMessage(), method);
+		}
+		errorRaised = true;
+	}
+
+	private void raiseError(String msg, Element source) {
 		this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Metamorphic error: " + msg, source);
 		errorRaised = true;
 	}
-	private HashMap<TypeElement, AnnotatedClass> classFiles;
+
+	private HashMap<TypeElement, AnnotatedClass>	classFiles;
+
 	private void generateCode() {
 		for (TypeElement e : classFiles.keySet()) {
 			AnnotatedClass c = classFiles.get(e);
@@ -100,8 +116,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 				raiseError("Unable to write file", e);
 			}
 			try {
-				errorRaised =false;
-				
+				errorRaised = false;
+
 				// PrintStream bw = System.out;
 				StringBuffer buf = new StringBuffer();
 				buf.append("package ");
@@ -128,10 +144,10 @@ public class AnnotationProcessor extends AbstractProcessor {
 						// Constants.TEST_METHOD_PARAM_NAME +
 						// ".invoke("+Constants.TEST_OBJECT_PARAM_NAME+");\n");
 
-						String formattedRule =  formatRule(m.getSimpleName().toString(), rule);
-						
+						String formattedRule = formatRule(m.getSimpleName().toString(), rule);
+
 						if (formattedRule == null || formattedRule.length() < 1)
-							raiseError("Missing ==", m);
+							raiseError("Unparsable rule", m, i, "test");
 						buf.append("return " + getCastString(m.getReturnType()) + " " + formatRule(m.getSimpleName().toString(), rule) + ";\n");
 						buf.append("\n}");
 
@@ -142,10 +158,10 @@ public class AnnotationProcessor extends AbstractProcessor {
 						if (!m.getReturnType().getKind().isPrimitive())
 							buf.append("if(orig == null && metamorphic != null) return false; if(orig == null && metamorphic == null) return true;");
 
-						formattedRule = formatRuleCheck(m, rule, m.getReturnType());
+						formattedRule = formatRuleCheck(m, rule, m.getReturnType(), i);
 
 						if (formattedRule == null || formattedRule.length() < 1)
-							raiseError("Missing ==", m);
+							raiseError("Unparsable rule", m, i, "check");
 
 						buf.append("return " + formattedRule + "\n");
 						buf.append("\n}");
@@ -154,17 +170,14 @@ public class AnnotationProcessor extends AbstractProcessor {
 					}
 				}
 				buf.append("\n}");
-				if(!errorRaised)
+				if (!errorRaised)
 					bw.append(buf);
 			} catch (Exception ex) {
-				raiseError("Unknown error "+ ex.getMessage(), e);
+				raiseError("Unknown error " + ex.getMessage(), e);
 			}
-			try
-			{
+			try {
 				bw.close();
-			}
-			catch(IOException ex)
-			{
+			} catch (IOException ex) {
 				raiseError("Unable to write file", e);
 			}
 		}
@@ -184,7 +197,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 		String left = rule.test();
 		left = left.replaceAll(methodName + "\\(",
 				Constants.TEST_METHOD_PARAM_NAME + ".invoke(" + Constants.TEST_OBJECT_PARAM_NAME + (left.contains(methodName + "()") ? "" : ","));
-		
+
 		Pattern p = Pattern.compile("\\\\([^(]+)\\(");
 		Matcher m = p.matcher(left);
 		left = m.replaceAll("new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.$1().apply((Object) ");
@@ -192,28 +205,28 @@ public class AnnotationProcessor extends AbstractProcessor {
 		return left;
 	}
 
-	private String formatRuleCheck(ExecutableElement method, Rule rule, TypeMirror returnType) throws Exception {
+	private String formatRuleCheck(ExecutableElement method, Rule rule, TypeMirror returnType, int ruleIndex) throws Exception {
 		String right = rule.check();
-		
+
 		right = right.replace("\\result", "orig");
-		if(rule.checkMethod().equals("==") || rule.checkMethod().equals(">=") || rule.checkMethod().equals("<=")  || rule.checkMethod().equals("<")  || rule.checkMethod().equals(">") || rule.checkMethod().equals("!="))
-		{
+		if (rule.checkMethod().equals("==") || rule.checkMethod().equals(">=") || rule.checkMethod().equals("<=") || rule.checkMethod().equals("<")
+				|| rule.checkMethod().equals(">") || rule.checkMethod().equals("!=")) {
 			if (returnType.getKind().isPrimitive())
 				right = "metamorphic " + rule.checkMethod() + " " + right + ";";
-			else
-			{
-				//check here that that the type is comparable
-				
-				if(rule.checkMethod().equals("!="))
+			else {
+				// check here that that the type is comparable
+
+				if (rule.checkMethod().equals("!="))
 					right = "! metamorphic.equals(" + right + ");";
-				else if(rule.checkMethod().equals("=="))
+				else if (rule.checkMethod().equals("=="))
 					right = "metamorphic.equals(" + right + ");";
-				else
-				{
-					if(this.processingEnv.getTypeUtils().isSubtype(returnType, this.processingEnv.getElementUtils().getTypeElement(Comparable.class.getName()).asType()))
-						right = "metamorphic.compareTo(" + right + ") " +rule.checkMethod()+ " 0;";
+				else {
+					if (this.processingEnv.getTypeUtils().isSubtype(returnType,
+							this.processingEnv.getElementUtils().getTypeElement(Comparable.class.getName()).asType()))
+						right = "metamorphic.compareTo(" + right + ") " + rule.checkMethod() + " 0;";
 					else
-						raiseError("Check method indicates a "+rule.checkMethod() +" check operation, but the return type (" +returnType+") is not Comparable", method);
+						raiseError("Check method indicates a " + rule.checkMethod() + " check operation, but the return type (" + returnType
+								+ ") is not Comparable", method, ruleIndex, "checkMethod");
 				}
 			}
 		}

@@ -537,3 +537,8 @@
 [columbus2 - main (2012-03-16 12:34:12,783)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.SimpleExample
 [columbus2 - main (2012-03-16 12:34:24,465)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
 [columbus2 - main (2012-03-16 12:34:25,156)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.SimpleExample
+[columbus2 - main (2012-03-16 12:56:38,878)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 12:56:39,612)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.SimpleExample
+[columbus2 - main (2012-03-16 14:26:31,708)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 14:32:33,555)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.ProcessorTester
+[columbus2 - main (2012-03-16 14:32:34,254)] INFO edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor.visitEnd(58) | Actually rewroteedu.columbia.cs.psl.metamorphic.example.SimpleExample
