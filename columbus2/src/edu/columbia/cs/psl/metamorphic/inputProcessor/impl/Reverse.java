@@ -23,9 +23,9 @@ public class Reverse extends ArrayProcessorHelper {
 	}
 	@Override
 	protected <T> void applyToList(List<T> src, List<T> dest) {
-		for(int i = 0; i<((List) src).size();i++)
+		for(int i = 0; i<src.size();i++)
 		{
-			((List) dest).add(((List) src).get(((List) src).size() - 1 - i));
+			dest.add(src.get(src.size() - 1 - i));
 		}
 	}
 }

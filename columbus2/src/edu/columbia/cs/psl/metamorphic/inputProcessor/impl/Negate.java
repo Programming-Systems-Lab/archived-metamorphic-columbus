@@ -5,6 +5,7 @@ import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 public class Negate extends AbstractElementProcessor {
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Object applyToNonListObject(Object o, Object... params) {
 		if(Number.class.isAssignableFrom(o.getClass()))

@@ -1,10 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import org.objectweb.asm.Type;
 
 import edu.columbia.cs.psl.metamorphic.runtime.visitor.InterceptingClassVisitor;
 
@@ -85,7 +81,11 @@ public abstract class AbstractInterceptor {
 	{
 		return onEnter(callee, getCurMethod(methodName,types), params);
 	}
-	private Method getMethod(String methodName, String[] types, Class clazz)
+	protected Method getMethod(String methodName,Class<?>[] params, Class<?> clazz) throws NoSuchMethodException
+	{
+		return getMethod(methodName, params, clazz, clazz);
+	}
+	protected Method getMethod(String methodName, Class<?>[] params, Class<?> clazz, Class<?> originalClazz) throws NoSuchMethodException
 	{
 		try {
 			for(Method m : clazz.getDeclaredMethods())
@@ -93,7 +93,49 @@ public abstract class AbstractInterceptor {
 				boolean ok = true;
 				if(m.getName().equals(methodName))
 				{
-					Class[] mArgs = m.getParameterTypes();
+					Class<?>[] mArgs = m.getParameterTypes();
+					if(mArgs.length != params.length)
+						break;
+					for(int i = 0;i<mArgs.length;i++)
+						if(!mArgs[i].isAssignableFrom(params[i]))
+							ok = false;
+
+					if(ok)
+					{
+						if(!m.isAccessible())
+							m.setAccessible(true);
+						return m;
+					}
+				}
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		if(clazz.getSuperclass() != null)
+			return getMethod(methodName, params, clazz.getSuperclass(),originalClazz);
+		throw new NoSuchMethodException(originalClazz.getCanonicalName() +"."+methodName + "("+ implode(params) + ")");
+	}
+	private String implode(Object[] array)
+	{
+		StringBuilder ret = new StringBuilder();
+		if(array == null || array.length == 0)
+			return "";
+		for(Object o : array)
+		{
+			ret.append(o);
+			ret.append(", ");
+		}
+		return ret.substring(0, ret.length()-2);
+	}
+	private Method getMethod(String methodName, String[] types, Class<?> clazz)
+	{
+		try {
+			for(Method m : clazz.getDeclaredMethods())
+			{
+				boolean ok = true;
+				if(m.getName().equals(methodName))
+				{
+					Class<?>[] mArgs = m.getParameterTypes();
 					if(mArgs.length != types.length)
 						break;
 					for(int i = 0;i<mArgs.length;i++)

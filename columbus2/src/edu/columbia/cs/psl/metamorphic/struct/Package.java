@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class Package {
 	private String name;
-	private ArrayList<Class> classes;
+	private ArrayList<Class<?>> classes;
 	private Package parent;
 	private ArrayList<Package> children;
 
 	public Package(String name, Package parent) {
 		super();
 		this.name = name;
-		this.classes = new ArrayList<Class>();
+		this.classes = new ArrayList<Class<?>>();
 		this.parent = parent;
 		this.children = new ArrayList<Package>();
 	}
@@ -21,10 +21,10 @@ public class Package {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ArrayList<Class> getClasses() {
+	public ArrayList<Class<?>> getClasses() {
 		return classes;
 	}
-	public void setClasses(ArrayList<Class> classes) {
+	public void setClasses(ArrayList<Class<?>> classes) {
 		this.classes = classes;
 	}
 	public Package getParent() {

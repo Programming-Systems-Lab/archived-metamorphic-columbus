@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Metamorphic {
-	Rule[] rules() default {};
+public @interface Rule {
+	public String test();
+	public String check();
+	public String checkMethod() default "==";
 }

@@ -1,6 +1,5 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.rits.cloning.Cloner;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
+import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
 
 /**
@@ -25,7 +25,7 @@ import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
 public class Interceptor extends AbstractInterceptor {
 	private HashMap<Integer, MethodInvocation> invocations = new HashMap<Integer, MethodInvocation>();
 	private Integer invocationId = 0;
-	private Class testerClass;
+	private Class<?> testerClass;
 	
 	private Logger logger = Logger.getLogger(Interceptor.class);
 	public Interceptor(Object intercepted) {
@@ -54,18 +54,24 @@ public class Interceptor extends AbstractInterceptor {
 		inv.params = params;
 		inv.method = method;
 		inv.callee = callee;
-		
+		inv.params_cloned = cloner.deepClone(params);
 		
 		/**
 		 * Make some changes here to instead apply the requested properties
 		 */
-		String[] rules = method.getAnnotation(Metamorphic.class).rule();
-		Class[] childTestParamTypes = new Class[params.length + 2];
+		Rule[] rules = method.getAnnotation(Metamorphic.class).rules();
+		Class<?>[] childTestParamTypes = new Class[params.length + 2];
 		Object[] childParams = new Object[params.length + 2];
+		
+		Class<?>[] checkTypes = new Class[params.length + 2];
+		checkTypes[0] = method.getReturnType();
+		checkTypes[1] = method.getReturnType();
+		
 		for(int i = 0; i< params.length; i++)
 		{
 			childTestParamTypes[i] = params[i].getClass();
 			childParams[i] = params[i];
+			checkTypes[i+2] = params[i].getClass();
 		}
 		childParams[params.length] = callee;
 		childParams[params.length +1 ] = method;
@@ -73,9 +79,7 @@ public class Interceptor extends AbstractInterceptor {
 		childTestParamTypes[params.length] = callee.getClass();
 		childTestParamTypes[params.length+1] = Method.class;
 		
-		Class[] returnTypes = new Class[2];
-		returnTypes[0] = method.getReturnType();
-		returnTypes[1] = method.getReturnType();
+		
 		
 		
 		invocations.put(retId, inv);
@@ -86,8 +90,8 @@ public class Interceptor extends AbstractInterceptor {
 			inv.children[i] = new MethodInvocation();
 			inv.children[i].rule = rules[i];
 			try {
-				inv.children[i].method = testerClass.getDeclaredMethod(inv.method.getName()+"_"+i, childTestParamTypes);
-				inv.children[i].checkMethod = testerClass.getDeclaredMethod(inv.method.getName()+"_Check"+i, returnTypes);
+				inv.children[i].method = getMethod(inv.method.getName()+"_"+i, childTestParamTypes,testerClass);
+				inv.children[i].checkMethod = getMethod(inv.method.getName()+"_Check"+i, checkTypes,testerClass);
 //				System.out.println(inv.children[i].checkMethod);
 				inv.children[i].params = childParams;
 			} catch (SecurityException e1) {
@@ -135,10 +139,15 @@ public class Interceptor extends AbstractInterceptor {
 		{
 		MethodInvocation inv = invocations.remove(id);
 		inv.returnValue = val;
+		Object[] checkParams = new Object[inv.params.length + 2];
+		for(int i =0;i<inv.params.length;i++)
+			checkParams[i+2] = inv.params_cloned[i];
 		for(MethodInvocation i : inv.children)
 		{
 			i.thread.join();
-			if(((Boolean)i.checkMethod.invoke(null, val,i.returnValue)) == false)
+			checkParams[0] = val;
+			checkParams[1] = i.returnValue;
+			if(((Boolean)i.checkMethod.invoke(null, checkParams)) == false)
 			{
 				throw new IllegalStateException("Metamorphic property has been violated on " + inv.method +". Rule: [" + i.rule +"]. Outputs were [" + val+"], ["+i.returnValue+"]");
 			}

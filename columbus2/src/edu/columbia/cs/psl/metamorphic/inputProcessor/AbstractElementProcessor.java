@@ -19,7 +19,7 @@ public abstract class AbstractElementProcessor extends
 		MetamorphicInputProcessor {
 	public abstract String getName();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final <T> T apply(T a, Object... params) throws IllegalArgumentException {
 		if(a.getClass().isArray())
 		{
@@ -37,7 +37,7 @@ public abstract class AbstractElementProcessor extends
 		{
 			try {
 				T ret = (T) a.getClass().newInstance();
-				for(Object o : (List) a)
+				for(Object o : (List<?>) a)
 					((List) ret).add(applyToNonListObject(o));
 				return ret;
 			} catch (InstantiationException e) {

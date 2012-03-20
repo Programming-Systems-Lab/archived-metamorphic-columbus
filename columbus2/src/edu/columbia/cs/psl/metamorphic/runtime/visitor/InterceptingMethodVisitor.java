@@ -1,7 +1,5 @@
 package edu.columbia.cs.psl.metamorphic.runtime.visitor;
 
-import java.util.ArrayList;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -9,46 +7,36 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.tree.AnnotationNode;
 
 import edu.columbia.cs.psl.metamorphic.runtime.Interceptor;
 
 public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String name;
-	private int api;
-	private Label timeVarStart = new Label();
-	private Label timeVarEnd = new Label();
+
 	public final static String INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew";
 	public final static String STATIC_INTERCEPTOR_FIELD_NAME = "___interceptor__by_mountaindew_static";
 
 	public final static String INTERCEPTOR_CLASS_NAME = "edu/columbia/cs/psl/metamorphic/runtime/Interceptor";
 	private Type[] argumentTypes;
 	private int access;
-	
-	public ArrayList<String> getRules() {
-		if(ruleNode == null)
-			return null;
-		return ruleNode.getRules();
-	}
+
 	protected InterceptingMethodVisitor(int api, MethodVisitor mv, int access,
 			String name, String desc) {
 		super(api, mv, access, name, desc);
 		this.name = name;
-		this.api = api;
 		this.access = access;
 		this.argumentTypes = Type.getArgumentTypes(desc);
 	}
 	boolean rewrite = false;
-	private MetamorphicRuleAnnotationVisitor ruleNode;
 	
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		if(desc.equals("Ledu/columbia/cs/psl/metamorphic/runtime/annotation/Metamorphic;"))
 		{
-			ruleNode = new MetamorphicRuleAnnotationVisitor(api,super.visitAnnotation(desc, visible));
+			classVisitor.setShouldRewrite();
 			rewrite = true;
 		}
-		return ruleNode;
+		return super.visitAnnotation(desc, visible);
 	}
 	private void onStaticMethodEnter()
 	{
@@ -137,6 +125,7 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	int refIdForInterceptor;
 	@Override
 	protected void onMethodEnter() {
+		super.onMethodEnter();
 		if(!rewrite)
 			return;
 		if ((access & Opcodes.ACC_STATIC) != 0)
@@ -149,10 +138,10 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 
 	@Override
 	public void visitMaxs(int maxStack, int maxLocals) {
-		visitLabel(timeVarEnd);
 		super.visitMaxs(maxStack, maxLocals);
 	}
 	public void onMethodExit(int opcode) {
+		super.onMethodExit(opcode);
 		if(!rewrite)
 			return;
 
@@ -186,6 +175,11 @@ public class InterceptingMethodVisitor extends AdviceAdapter{
 	private String className;
 	public void setClassName(String className) {
 		this.className = className;
+	}
+	private InterceptingClassVisitor classVisitor;
+	public void setClassVisitor(
+			InterceptingClassVisitor interceptingClassVisitor) {
+		classVisitor = interceptingClassVisitor;
 	}
 
 }

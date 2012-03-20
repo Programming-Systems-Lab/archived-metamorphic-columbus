@@ -13,6 +13,7 @@ public class AddNumericConstant extends AbstractElementProcessor {
 		return "Add a constant";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Object applyToNonListObject(Object o, Object... params) {
 		if(Number.class.isAssignableFrom(o.getClass()))

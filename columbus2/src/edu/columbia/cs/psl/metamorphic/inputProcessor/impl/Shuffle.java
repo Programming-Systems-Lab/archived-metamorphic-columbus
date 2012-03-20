@@ -34,7 +34,7 @@ public class Shuffle extends ArrayProcessorHelper {
 	@Override
 	protected <T> void applyToList(List<T> srcList, List<T> destList) {
 		for(int i = 0; i<((List) srcList).size();i++)
-			((List) destList).add(((List) srcList).get(i));
+			destList.add(srcList.get(i));
 		Collections.shuffle(destList);
 	}
 

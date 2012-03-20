@@ -1,7 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -19,6 +18,7 @@ public abstract class ArrayProcessorHelper extends AbstractArrayProcessor {
 		applyBetweenArrays(a,newArray);
         return newArray;
 	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T> T apply(T a, Object... args) throws IllegalArgumentException
 	{
 		if(a instanceof List<?>)
