@@ -8,9 +8,10 @@ import org.apache.log4j.Logger;
 
 import com.rits.cloning.Cloner;
 
+import edu.columbia.cs.psl.invivo.runtime.AbstractInterceptor;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
-import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
+import edu.columbia.cs.psl.metamorphic.struct.MetamorphicMethodInvocation;
 
 /**
  * Each intercepted object will have its _own_ Interceptor instance.
@@ -23,7 +24,7 @@ import edu.columbia.cs.psl.metamorphic.struct.MethodInvocation;
  *
  */
 public class Interceptor extends AbstractInterceptor {
-	private HashMap<Integer, MethodInvocation> invocations = new HashMap<Integer, MethodInvocation>();
+	private HashMap<Integer, MetamorphicMethodInvocation> invocations = new HashMap<Integer, MetamorphicMethodInvocation>();
 	private Integer invocationId = 0;
 	private Class<?> testerClass;
 	
@@ -50,7 +51,7 @@ public class Interceptor extends AbstractInterceptor {
 			invocationId++;
 			retId = invocationId;	
 		}
-		final MethodInvocation inv = new MethodInvocation();
+		final MetamorphicMethodInvocation inv = new MetamorphicMethodInvocation();
 		inv.params = params;
 		inv.method = method;
 		inv.callee = callee;
@@ -83,16 +84,16 @@ public class Interceptor extends AbstractInterceptor {
 		
 		
 		invocations.put(retId, inv);
-		inv.children = new MethodInvocation[rules.length];
+		inv.children = new MetamorphicMethodInvocation[rules.length];
 		for(int i = 0; i < rules.length;i++)
 		{
 			final int k = i;
-			inv.children[i] = new MethodInvocation();
+			inv.children[i] = new MetamorphicMethodInvocation();
+			inv.children[i].parent = inv;
 			inv.children[i].rule = rules[i];
 			try {
 				inv.children[i].method = getMethod(inv.method.getName()+"_"+i, childTestParamTypes,testerClass);
 				inv.children[i].checkMethod = getMethod(inv.method.getName()+"_Check"+i, checkTypes,testerClass);
-//				System.out.println(inv.children[i].checkMethod);
 				inv.children[i].params = childParams;
 			} catch (SecurityException e1) {
 				// TODO Auto-generated catch block
@@ -101,31 +102,7 @@ public class Interceptor extends AbstractInterceptor {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			inv.children[i].thread= new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					try {
-						Object clone = cloner.deepClone(inv.callee);
-						inv.children[k].params[inv.params.length] = clone;
-						setAsChild(clone);
-						logger.debug("Calling " + inv.children[k].method);
-						for(int j = 0; j < inv.children[k].params.length;j ++)
-						{
-							logger.debug("Param: " + inv.children[k].params[j]);
-						}
-						inv.children[k].returnValue = inv.children[k].method.invoke(null, inv.children[k].params);
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				}
-			});
+			inv.children[i].thread= createChildThread(inv.children[i]);
 			inv.children[i].thread.start();
 		}
 		return retId;
@@ -137,12 +114,12 @@ public class Interceptor extends AbstractInterceptor {
 			return;
 		try
 		{
-		MethodInvocation inv = invocations.remove(id);
+		MetamorphicMethodInvocation inv = invocations.remove(id);
 		inv.returnValue = val;
 		Object[] checkParams = new Object[inv.params.length + 2];
 		for(int i =0;i<inv.params.length;i++)
 			checkParams[i+2] = inv.params_cloned[i];
-		for(MethodInvocation i : inv.children)
+		for(MetamorphicMethodInvocation i : inv.children)
 		{
 			i.thread.join();
 			checkParams[0] = val;

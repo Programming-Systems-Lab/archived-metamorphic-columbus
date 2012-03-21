@@ -1,16 +1,12 @@
 package edu.columbia.cs.psl.metamorphic.runtime;
 
 
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
-import edu.columbia.cs.psl.metamorphic.compiler.MetamorphicClassFileTransformer;
+import edu.columbia.cs.psl.invivo.runtime.InvivoPreMain;
 
 public class PreMain {
 	public static void premain(String args, Instrumentation inst) {
-		
-		ClassFileTransformer transformer = 
-								new MetamorphicClassFileTransformer();
-		inst.addTransformer(transformer);
+		InvivoPreMain.premain(args, inst,new Configuration());
 	}
 }
