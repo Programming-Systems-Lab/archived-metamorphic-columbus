@@ -1,6 +1,5 @@
 package edu.columbia.cs.psl.metamorphic.struct;
 
-import java.lang.reflect.Method;
 
 import edu.columbia.cs.psl.invivo.struct.MethodInvocation;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
@@ -11,15 +10,7 @@ public class MetamorphicMethodInvocation extends MethodInvocation
 	 * 
 	 */
 	private static final long serialVersionUID = -2038681047970130055L;
-	public Object callee;
-	public Method method;
-	public Object[] params;
-	public Object[] params_cloned;
-	public Object returnValue;
-	public Exception thrownExceptions;
-	public Thread thread;
-	public MetamorphicMethodInvocation[] children;
-	public Method checkMethod;
+	
 	public Rule rule;
 	
 	@Override
@@ -33,7 +24,7 @@ public class MetamorphicMethodInvocation extends MethodInvocation
 		}
 		String childStr = "";
 		if(children != null)
-			for(MetamorphicMethodInvocation i : children)
+			for(MethodInvocation i : children)
 				childStr += i.toString() +",";
 		return "[Invocation on method "+ (method == null ? "null" : method.getName()) + " with params " + paramStr + " returning " + returnValue +" on object " + callee +".  Children: ["+childStr+"] ]";
 	}

@@ -37,6 +37,9 @@ public class ProcessorTester {
 	// this will give an error if the array is empty, but whatever... =)
 	return values[closestIndex];
   }
+    
+//    private static String[] myStuff = new String[] {"d","e","f"};
+//    private static String[] myStuff_2 = new String[] {"d","e","f"};
     @Metamorphic(rules = {
     		@Rule(test = "pickFirstString(\\Shuffle(in))", check="\\result")})
     private String pickFirstString(String[] in)
