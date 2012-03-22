@@ -3,6 +3,8 @@ package edu.columbia.cs.psl.metamorphic.runtime;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 
 
 import edu.columbia.cs.psl.invivo.runtime.AbstractInterceptor;
@@ -25,7 +27,7 @@ public class Interceptor extends AbstractInterceptor {
 	private HashMap<Integer, MetamorphicMethodInvocation> invocations = new HashMap<Integer, MetamorphicMethodInvocation>();
 	private Integer invocationId = 0;
 	private Class<?> testerClass;
-	
+	private Logger logger = Logger.getLogger(Interceptor.class);
 	public Interceptor(Object intercepted) {
 		super(intercepted);
 		try {
@@ -115,6 +117,9 @@ public class Interceptor extends AbstractInterceptor {
 		for(MethodInvocation i : inv.children)
 		{
 			i.thread.join();
+			logger.info("\tChild"+getChildId(i.callee) +" finished");
+			
+			
 			checkParams[0] = val;
 			checkParams[1] = i.returnValue;
 			if(((Boolean)i.checkMethod.invoke(null, checkParams)) == false)
@@ -122,8 +127,7 @@ public class Interceptor extends AbstractInterceptor {
 				throw new IllegalStateException("Metamorphic property has been violated on " + inv.method +". Rule: [" + ((MetamorphicMethodInvocation) i).rule +"]. Outputs were [" + val+"], ["+i.returnValue+"]");
 			}
 		}
-		System.out.println("Invocation result: " + inv);
-		
+		logger.info("Invocation result: " + inv);
 		}
 		catch(Exception ex)
 		{
