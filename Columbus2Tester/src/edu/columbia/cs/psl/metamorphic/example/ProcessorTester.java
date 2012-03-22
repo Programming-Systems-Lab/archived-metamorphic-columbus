@@ -1,5 +1,6 @@
 package edu.columbia.cs.psl.metamorphic.example;
 
+import edu.columbia.cs.psl.invivo.runtime.AbstractInterceptor;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 
@@ -44,6 +45,15 @@ public class ProcessorTester {
     		@Rule(test = "pickFirstString(\\Shuffle(in))", check="\\result")})
     private String pickFirstString(String[] in)
 	{
+    	try
+    	{
+    		int childThread = AbstractInterceptor.getThreadChildId();
+    		System.out.println("I'm in child " + childThread);
+    	}
+    	catch(IllegalStateException ex)
+    	{
+    		System.out.println("I'm in a parent");
+    	}
 		return in[0];
 	}
 }
