@@ -44,39 +44,40 @@ public class Interceptor extends AbstractInterceptor {
 			return -1;
 		
 		int retId = 0;
+		//Get our invocation id
 		synchronized(invocationId)
 		{
 			invocationId++;
 			retId = invocationId;	
 		}
+		//Create a new invocation object to store
 		final MetamorphicMethodInvocation inv = new MetamorphicMethodInvocation();
 		inv.params = params;
 		inv.method = method;
 		inv.callee = callee;
-		inv.params_cloned = cloner.deepClone(params);
-		
-		/**
-		 * Make some changes here to instead apply the requested properties
-		 */
+		inv.orig_params = deepClone(params); //Used for the check method, in case you care to refer to them in the rule
+
+		//Find the rules
 		Rule[] rules = method.getAnnotation(Metamorphic.class).rules();
-		Class<?>[] childTestParamTypes = new Class[params.length + 2];
-		Object[] childParams = new Object[params.length + 2];
 		
-		Class<?>[] checkTypes = new Class[params.length + 2];
+		//Create the arrays needed for invoking methods
+		
+		Class<?>[] checkTypes = new Class[params.length + 2]; //First two params will be the two return values
 		checkTypes[0] = method.getReturnType();
 		checkTypes[1] = method.getReturnType();
 		
+		Class<?>[] childTestParamTypes = new Class[params.length + 2];	//Last two params will be the callee and the method
+		childTestParamTypes[params.length] = callee.getClass();
+		childTestParamTypes[params.length+1] = Method.class;
+		
+		Object[] childParams = new Object[params.length + 2];
 		for(int i = 0; i< params.length; i++)
 		{
 			childTestParamTypes[i] = params[i].getClass();
 			childParams[i] = params[i];
 			checkTypes[i+2] = params[i].getClass();
 		}
-		childParams[params.length] = callee;
-		childParams[params.length +1 ] = method;
 		
-		childTestParamTypes[params.length] = callee.getClass();
-		childTestParamTypes[params.length+1] = Method.class;
 		
 		invocations.put(retId, inv);
 		
@@ -85,18 +86,20 @@ public class Interceptor extends AbstractInterceptor {
 		{
 			inv.children[i] = new MetamorphicMethodInvocation();
 			inv.children[i].parent = inv;
+			inv.children[i].callee = deepClone(inv.callee);
 			((MetamorphicMethodInvocation) inv.children[i]).rule = rules[i];
 			try {
 				inv.children[i].method = getMethod(inv.method.getName()+"_"+i, childTestParamTypes,testerClass);
 				inv.children[i].checkMethod = getMethod(inv.method.getName()+"_Check"+i, checkTypes,testerClass);
-				inv.children[i].params = childParams;
 			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error("Error looking up method/check method for " + inv.method.getName()+"_"+i, e1);
 			} catch (NoSuchMethodException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error("Error looking up method/check method for " + inv.method.getName()+"_"+i, e1);
 			}
+			inv.children[i].params = deepClone(childParams);
+			inv.children[i].params[params.length] = inv.children[i].callee;
+			inv.children[i].params[params.length +1 ] = method;
+			
 			inv.children[i].thread= createChildThread(inv.children[i]);
 			inv.children[i].thread.start();
 		}
@@ -113,7 +116,7 @@ public class Interceptor extends AbstractInterceptor {
 		inv.returnValue = val;
 		Object[] checkParams = new Object[inv.params.length + 2];
 		for(int i =0;i<inv.params.length;i++)
-			checkParams[i+2] = inv.params_cloned[i];
+			checkParams[i+2] = inv.orig_params[i];
 		for(MethodInvocation i : inv.children)
 		{
 			i.thread.join();

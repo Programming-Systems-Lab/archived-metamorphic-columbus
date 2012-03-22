@@ -11,6 +11,7 @@ public class MetamorphicMethodInvocation extends MethodInvocation
 	 */
 	private static final long serialVersionUID = -2038681047970130055L;
 	
+	public Object[] orig_params;
 	public Rule rule;
 	
 	@Override
