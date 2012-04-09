@@ -7,7 +7,10 @@ import org.apache.log4j.Logger;
 
 
 
+import edu.columbia.cs.psl.invivo.runtime.AbstractDeepCloningInterceptor;
 import edu.columbia.cs.psl.invivo.runtime.AbstractInterceptor;
+import edu.columbia.cs.psl.invivo.runtime.AbstractLazyCloningInterceptor;
+import edu.columbia.cs.psl.invivo.runtime.InvivoPreMain;
 import edu.columbia.cs.psl.invivo.struct.MethodInvocation;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
@@ -23,7 +26,7 @@ import edu.columbia.cs.psl.metamorphic.struct.MetamorphicMethodInvocation;
  * @author jon
  *
  */
-public class Interceptor extends AbstractInterceptor {
+public class Interceptor extends AbstractLazyCloningInterceptor {
 	private HashMap<Integer, MetamorphicMethodInvocation> invocations = new HashMap<Integer, MetamorphicMethodInvocation>();
 	private Integer invocationId = 0;
 	private Class<?> testerClass;
@@ -38,25 +41,17 @@ public class Interceptor extends AbstractInterceptor {
 			e.printStackTrace();
 		}
 	}
-	public int onEnter(Object callee, Method method, Object[] params)
-	{
-		if(isChild(callee))
-			return -1;
-		
-		int retId = 0;
-		//Get our invocation id
-		synchronized(invocationId)
-		{
-			invocationId++;
-			retId = invocationId;	
-		}
+
+	@Override
+	public Object onCall(Object callee, Method method, Object[] params) {
+
 		//Create a new invocation object to store
 		final MetamorphicMethodInvocation inv = new MetamorphicMethodInvocation();
 		inv.params = params;
 		inv.method = method;
 		inv.callee = callee;
 		inv.orig_params = deepClone(params); //Used for the check method, in case you care to refer to them in the rule
-
+		
 		//Find the rules
 		Rule[] rules = method.getAnnotation(Metamorphic.class).rules();
 		
@@ -77,20 +72,19 @@ public class Interceptor extends AbstractInterceptor {
 			childParams[i] = params[i];
 			checkTypes[i+2] = params[i].getClass();
 		}
+		inv.thread = createRunnerThread(inv,false);
 		
-		
-		invocations.put(retId, inv);
-		
+		Object calleeClone = deepClone(inv.callee);
 		inv.children = new MetamorphicMethodInvocation[rules.length];
 		for(int i = 0; i < rules.length;i++)
 		{
 			inv.children[i] = new MetamorphicMethodInvocation();
 			inv.children[i].parent = inv;
-			inv.children[i].callee = deepClone(inv.callee);
+			inv.children[i].callee = shallowClone(calleeClone);
 			((MetamorphicMethodInvocation) inv.children[i]).rule = rules[i];
 			try {
-				inv.children[i].method = getMethod(inv.method.getName()+"_"+i, childTestParamTypes,testerClass);
-				inv.children[i].checkMethod = getMethod(inv.method.getName()+"_Check"+i, checkTypes,testerClass);
+				inv.children[i].method = getMethod(inv.method.getName().substring(InvivoPreMain.config.getInterceptedPrefix().length())+"_"+i, childTestParamTypes,testerClass);
+				inv.children[i].checkMethod = getMethod(inv.method.getName().substring(InvivoPreMain.config.getInterceptedPrefix().length())+"_Check"+i, checkTypes,testerClass);
 			} catch (SecurityException e1) {
 				logger.error("Error looking up method/check method for " + inv.method.getName()+"_"+i, e1);
 			} catch (NoSuchMethodException e1) {
@@ -103,39 +97,21 @@ public class Interceptor extends AbstractInterceptor {
 			inv.children[i].thread= createChildThread(inv.children[i]);
 			inv.children[i].thread.start();
 		}
-		return retId;
-	}
-	
-	public void onExit(Object val, int op, int id)
-	{
-		if(id < 0)
-			return;
-		try
-		{
-		MetamorphicMethodInvocation inv = invocations.remove(id);
-		inv.returnValue = val;
-		Object[] checkParams = new Object[inv.params.length + 2];
-		for(int i =0;i<inv.params.length;i++)
-			checkParams[i+2] = inv.orig_params[i];
+		
+
+		inv.thread.start();
+		try{
+		inv.thread.join();
 		for(MethodInvocation i : inv.children)
 		{
 			i.thread.join();
-			logger.info("\tChild"+getChildId(i.callee) +" finished");
-			
-			
-			checkParams[0] = val;
-			checkParams[1] = i.returnValue;
-			if(((Boolean)i.checkMethod.invoke(null, checkParams)) == false)
-			{
-				throw new IllegalStateException("Metamorphic property has been violated on " + inv.method +". Rule: [" + ((MetamorphicMethodInvocation) i).rule +"]. Outputs were [" + val+"], ["+i.returnValue+"]");
-			}
 		}
-		logger.info("Invocation result: " + inv);
 		}
 		catch(Exception ex)
 		{
 			ex.printStackTrace();
 		}
+		return inv.returnValue;
 	}
 	
 } 
