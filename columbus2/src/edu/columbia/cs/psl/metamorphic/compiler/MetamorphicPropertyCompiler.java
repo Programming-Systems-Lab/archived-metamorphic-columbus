@@ -187,6 +187,21 @@ public class MetamorphicPropertyCompiler {
 				|| rule.checkMethod().equals(">") || rule.checkMethod().equals("!=")) {
 			if (returnType.getKind().isPrimitive())
 				right = "metamorphic " + rule.checkMethod() + " " + right + ";";
+			else if(returnType.getKind() == TypeKind.ARRAY)
+			{
+				if (rule.checkMethod().equals("!="))
+					right = "! java.util.Arrays.equals(metamorphic, (" + returnType.toString() + ")" + right + ");";
+				else if (rule.checkMethod().equals("=="))
+					right = "java.util.Arrays.equals(metamorphic,(" + returnType.toString() + ")" + right + ");";
+				else {
+					if (processingEnv.getTypeUtils().isSubtype(returnType,
+							processingEnv.getElementUtils().getTypeElement(Comparable.class.getName()).asType()))
+						right = "metamorphic.compareTo(" + right + ") " + rule.checkMethod() + " 0;";
+					else
+						raiseError("Check method indicates a " + rule.checkMethod() + " check operation, but the return type (" + returnType
+								+ ") is not Comparable", method, ruleIndex, "checkMethod");
+				}
+			}
 			else {
 				if (rule.checkMethod().equals("!="))
 					right = "! metamorphic.equals(" + right + ");";
