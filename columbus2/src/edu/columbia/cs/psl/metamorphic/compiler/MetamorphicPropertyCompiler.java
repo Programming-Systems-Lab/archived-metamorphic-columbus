@@ -186,7 +186,10 @@ public class MetamorphicPropertyCompiler {
 		if (rule.checkMethod().equals("==") || rule.checkMethod().equals(">=") || rule.checkMethod().equals("<=") || rule.checkMethod().equals("<")
 				|| rule.checkMethod().equals(">") || rule.checkMethod().equals("!=")) {
 			if (returnType.getKind().isPrimitive())
-				right = "metamorphic " + rule.checkMethod() + " " + right + ";";
+				if(returnType.getKind() == TypeKind.DOUBLE && rule.checkMethod().equals("=="))
+					right = "edu.columbia.cs.psl.metamorphic.outputRelation.impl.ApproximatelyEqualTo.applies(metamorphic,"+ right + ",0.000001);";
+				else
+					right = "metamorphic " + rule.checkMethod() + " " + right + ";";
 			else if(returnType.getKind() == TypeKind.ARRAY)
 			{
 				if (rule.checkMethod().equals("!="))
