@@ -8,9 +8,9 @@ import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 public class ProcessorTester {
     public static void main(String[] args) {
         ProcessorTester tester = new ProcessorTester();
-//        System.out.println(tester.findClosestValue(new int[] {1,2,3,1000, 10,1000,40000}, 3));
-        tester.cl.foo = "foobar";
-        System.out.println(tester.pickFirstString(new String[] {"a","b","c","b","c","b","c","b","c","b","c","b","c","b","c"}));
+        System.out.println(tester.findClosestValue(new int[] {1,2,3,1000, 10,1000,40000}, 3));
+//        tester.cl.foo = "foobar";
+//        System.out.println(tester.pickFirstString(new String[] {"a","b","c","b","c","b","c","b","c","b","c","b","c","b","c"}));
 //        SimpleExample ex2 = new SimpleExample();
 //        ex2.go(new String[] {"d"});
     }
@@ -39,8 +39,8 @@ public class ProcessorTester {
 	// this will give an error if the array is empty, but whatever... =)
 	return values[closestIndex];
   }
-    private String foo = "foo";
-    private AnotherClass cl = new AnotherClass();
+    private static String foo = "foo";
+    private static AnotherClass cl = new AnotherClass();
 //    private static String[] myStuff = new String[] {"d","e","f"};
 //    private static String[] myStuff_2 = new String[] {"d","e","f"};
     @Metamorphic(rules = {
@@ -50,11 +50,11 @@ public class ProcessorTester {
 	{    	
     	int childThread = AbstractInterceptor.getThreadChildId();
     	System.out.println("I'm in child " + childThread);
-    	System.out.println(childThread + " ()AnotherClass's foo:" + cl.foo);
-    	cl.foo = "asdf"+childThread;
-    	System.out.println(childThread + "AnotherClass's foo:" + cl.foo);
+    	System.out.println(childThread + " ()AnotherClass's foo:" + foo);
+    	foo = "asdf"+childThread;
+    	System.out.println(childThread + "AnotherClass's foo:" + foo);
     	for(int i = 0; i < 100;i++)
-    	System.out.println(childThread + "AnotherClass's foo:" + cl.foo);
+    	System.out.println(childThread + "AnotherClass's foo:" + foo);
     	return in[0];
 	}
 }

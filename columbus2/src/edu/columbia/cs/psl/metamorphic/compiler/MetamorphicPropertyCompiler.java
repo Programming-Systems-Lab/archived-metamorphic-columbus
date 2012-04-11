@@ -14,10 +14,13 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
+
+import org.objectweb.asm.Type;
 
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
@@ -165,6 +168,17 @@ public class MetamorphicPropertyCompiler {
 	private String formatRuleCheck(ExecutableElement method, Rule rule, TypeMirror returnType, int ruleIndex) throws Exception {
 		String right = rule.check();
 
+		Pattern p = Pattern.compile("\\\\([^(]+)\\(");
+		Matcher m = p.matcher(right);
+		if(m.find())
+		{
+			right = (returnType.getKind().isPrimitive() ? getBoxedType(returnType.getKind()) + ".valueOf((" + getBoxedType(returnType.getKind()) + ")" : "" ) + 
+					m.replaceAll("new edu.columbia.cs.psl.metamorphic.inputProcessor.impl.$1().apply((Object) " );
+			if(returnType.getKind().isPrimitive())
+				right =  right + ")";
+			m.reset(right);
+		}
+		
 		right = right.replace("\\result", "orig");
 		if (rule.checkMethod().equals("==") || rule.checkMethod().equals(">=") || rule.checkMethod().equals("<=") || rule.checkMethod().equals("<")
 				|| rule.checkMethod().equals(">") || rule.checkMethod().equals("!=")) {
@@ -185,7 +199,25 @@ public class MetamorphicPropertyCompiler {
 				}
 			}
 		}
+		
 		return right;
+	}
+	private String getBoxedType(TypeKind kind) {
+		if(kind == TypeKind.BOOLEAN)
+			return "Boolean";
+		else if(kind == TypeKind.BYTE)
+			return "Byte";
+		else if(kind == TypeKind.DOUBLE)
+			return "Double";
+		else if(kind == TypeKind.FLOAT)
+			return "Float";
+		else if(kind == TypeKind.INT)
+			return "Integer";
+		else if(kind == TypeKind.LONG)
+			return "Long";
+		else if(kind == TypeKind.SHORT)
+			return "Short";
+		return null;
 	}
 
 
