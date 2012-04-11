@@ -6,10 +6,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import edu.columbia.cs.psl.invivo.runtime.AbstractDeepCloningInterceptor;
-import edu.columbia.cs.psl.invivo.runtime.AbstractInterceptor;
 import edu.columbia.cs.psl.invivo.runtime.AbstractLazyCloningInterceptor;
-import edu.columbia.cs.psl.invivo.runtime.InvivoPreMain;
 import edu.columbia.cs.psl.invivo.struct.MethodInvocation;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;

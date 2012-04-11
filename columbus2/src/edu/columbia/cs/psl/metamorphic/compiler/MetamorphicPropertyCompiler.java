@@ -20,8 +20,6 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-import org.objectweb.asm.Type;
-
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Metamorphic;
 import edu.columbia.cs.psl.metamorphic.runtime.annotation.Rule;
 
