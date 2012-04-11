@@ -104,6 +104,9 @@ public class MetamorphicPropertyCompiler {
 					buf.append(realParams);
 					buf.append(c.getTypeElement().getSimpleName() + " " + Constants.TEST_OBJECT_PARAM_NAME + ", java.lang.reflect.Method "
 							+ Constants.TEST_METHOD_PARAM_NAME);
+					buf.append(", ");
+					buf.append(m.getReturnType());
+					buf.append(" result");
 					buf.append(") throws Exception {\n");
 
 					String formattedRule = formatRule(m.getSimpleName().toString(), rule);

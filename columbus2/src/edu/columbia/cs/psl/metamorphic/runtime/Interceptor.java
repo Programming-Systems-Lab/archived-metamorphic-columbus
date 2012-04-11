@@ -61,15 +61,15 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 		checkTypes[0] = method.getReturnType();
 		checkTypes[1] = method.getReturnType();
 		
-		Class<?>[] childTestParamTypes = new Class[params.length + 2];	//Last two params will be the callee and the method
+		Class<?>[] childTestParamTypes = new Class[params.length + 3];	//Last three params will be the callee and the method and the original result
 		childTestParamTypes[params.length] = callee.getClass();
 		childTestParamTypes[params.length+1] = Method.class;
-		
-		Object[] childParams = new Object[params.length + 2];
+		childTestParamTypes[params.length+2] = method.getReturnType();
+		Object[] childParams = new Object[params.length + 3];
 		for(int i = 0; i< params.length; i++)
 		{
 			childTestParamTypes[i] = params[i].getClass();
-			childParams[i] = params[i];
+			childParams[i] = inv.orig_params[i];
 			checkTypes[i+2] = params[i].getClass();
 		}
 		inv.thread = createRunnerThread(inv,false);
@@ -95,13 +95,20 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 			inv.children[i].params[params.length +1 ] = method;
 			
 			inv.children[i].thread= createChildThread(inv.children[i]);
-			inv.children[i].thread.start();
+
 		}
 		
 
 		inv.thread.start();
 		try{
 		inv.thread.join();
+
+		Object origReturnValCloned = deepClone(inv.returnValue);
+		for(MethodInvocation i : inv.children)
+		{
+			i.params[i.params.length-1] = origReturnValCloned;
+			i.thread.start();
+		}
 		for(MethodInvocation i : inv.children)
 		{
 			i.thread.join();
