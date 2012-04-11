@@ -1,5 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
+import java.util.HashSet;
+
 import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 
 public class AddNumericConstant extends AbstractElementProcessor {
@@ -22,6 +24,13 @@ public class AddNumericConstant extends AbstractElementProcessor {
 			return returnToOriginalType(d, (Class<? extends Number>) o.getClass());
 		}
 		throw new IllegalArgumentException("Can't add a constant to an object value");
+	}
+
+	@Override
+	public HashSet<Object[]> getBoundaryDefaultParameters() {
+		HashSet<Object[]> ret = new HashSet<Object[]>();
+		ret.add(new Object[] {-1,0,1,100,-100,2});
+		return ret;
 	}
 
 }

@@ -1,5 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor;
 
+import java.util.HashSet;
+
 
 /**
  * A metamorphic input processor is a class that provides a functional
@@ -33,4 +35,6 @@ public abstract class MetamorphicInputProcessor {
 		}
 		return ret;
 	}
+
+	public abstract HashSet<Object[]> getBoundaryDefaultParameters();
 }

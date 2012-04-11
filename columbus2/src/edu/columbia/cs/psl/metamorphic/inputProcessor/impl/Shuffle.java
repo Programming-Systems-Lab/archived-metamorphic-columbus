@@ -2,6 +2,7 @@ package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -37,5 +38,10 @@ public class Shuffle extends ArrayProcessorHelper {
 			destList.add(srcList.get(i));
 		Collections.shuffle(destList);
 	}
-
+	@Override
+	public HashSet<Object[]> getBoundaryDefaultParameters() {
+		HashSet<Object[]> ret = new HashSet<Object[]>();
+		ret.add(null);
+		return ret;
+	}
 }

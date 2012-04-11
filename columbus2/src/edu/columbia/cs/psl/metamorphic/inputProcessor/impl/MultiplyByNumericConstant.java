@@ -1,5 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
+import java.util.HashSet;
+
 import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 
 public class MultiplyByNumericConstant extends AbstractElementProcessor {
@@ -23,5 +25,10 @@ public class MultiplyByNumericConstant extends AbstractElementProcessor {
 		}
 		throw new IllegalArgumentException("Can't multiply a constant and an object value - param was " + o);
 	}
-
+	@Override
+	public HashSet<Object[]> getBoundaryDefaultParameters() {
+		HashSet<Object[]> ret = new HashSet<Object[]>();
+		ret.add(new Object[] {-1,0,1,100,-100,2});
+		return ret;
+	}
 }

@@ -1,5 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
+import java.util.HashSet;
+
 import edu.columbia.cs.psl.metamorphic.inputProcessor.AbstractElementProcessor;
 
 public class Negate extends AbstractElementProcessor {
@@ -21,5 +23,10 @@ public class Negate extends AbstractElementProcessor {
 		// TODO Auto-generated method stub
 		return "Negate";
 	}
-
+	@Override
+	public HashSet<Object[]> getBoundaryDefaultParameters() {
+		HashSet<Object[]> ret = new HashSet<Object[]>();
+		ret.add(null);
+		return ret;
+	}
 }

@@ -1,6 +1,7 @@
 package edu.columbia.cs.psl.metamorphic.inputProcessor.impl;
 
 import java.lang.reflect.Array;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.columbia.cs.psl.metamorphic.inputProcessor.ArrayProcessorHelper;
@@ -27,5 +28,11 @@ public class Reverse extends ArrayProcessorHelper {
 		{
 			dest.add(src.get(src.size() - 1 - i));
 		}
+	}
+	@Override
+	public HashSet<Object[]> getBoundaryDefaultParameters() {
+		HashSet<Object[]> ret = new HashSet<Object[]>();
+		ret.add(null);
+		return ret;
 	}
 }
