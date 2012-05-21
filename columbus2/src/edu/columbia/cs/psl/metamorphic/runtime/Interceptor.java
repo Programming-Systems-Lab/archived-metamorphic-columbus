@@ -51,9 +51,9 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 		}
 		// Create a new invocation object to store
 		final MetamorphicMethodInvocation inv = new MetamorphicMethodInvocation();
-		inv.params = params;
-		inv.method = method;
-		inv.callee = callee;
+		inv.setParams(params);
+		inv.setMethod(method);
+		inv.setCallee(callee);
 		inv.orig_params = deepClone(params); // Used for the check method, in
 												// case you care to refer to
 												// them in the rule
@@ -83,27 +83,27 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 			checkTypes[i + 2] = params[i].getClass();
 		}
 
-		Object calleeClone = deepClone(inv.callee);
-		inv.children = new MetamorphicMethodInvocation[rules.length];
+		Object calleeClone = deepClone(inv.getCallee());
+		inv.setChildren(new MetamorphicMethodInvocation[rules.length]);
 		for (int i = 0; i < rules.length; i++) {
-			inv.children[i] = new MetamorphicMethodInvocation();
-			inv.children[i].parent = inv;
-			inv.children[i].callee = shallowClone(calleeClone);
-			((MetamorphicMethodInvocation) inv.children[i]).rule = rules[i];
+			inv.getChildren()[i] = new MetamorphicMethodInvocation();
+			inv.getChildren()[i].setParent(inv);
+			inv.getChildren()[i].setCallee(shallowClone(calleeClone));
+			((MetamorphicMethodInvocation) inv.getChildren()[i]).rule = rules[i];
 			try {
-				inv.children[i].method = getMethod(inv.method.getName() + "_" + i,
-						childTestParamTypes, testerClass);
-				inv.children[i].checkMethod = getMethod(inv.method.getName() + "_Check" + i,
-						checkTypes, testerClass);
+				inv.getChildren()[i].setMethod(getMethod(inv.getMethod().getName() + "_" + i,
+						childTestParamTypes, testerClass));
+				inv.getChildren()[i].setCheckMethod(getMethod(inv.getMethod().getName() + "_Check" + i,
+						checkTypes, testerClass));
 			} catch (SecurityException e1) {
-				logger.error("Error looking up method/check method for " + inv.method.getName() + "_" + i, e1);
+				logger.error("Error looking up method/check method for " + inv.getMethod().getName() + "_" + i, e1);
 			} catch (NoSuchMethodException e1) {
-				logger.error("Error looking up method/check method for " + inv.method.getName() + "_" + i, e1);
+				logger.error("Error looking up method/check method for " + inv.getMethod().getName() + "_" + i, e1);
 			}
-			inv.children[i].params = deepClone(childParams);
-			inv.children[i].params[params.length] = inv.children[i].callee;
-			inv.children[i].params[params.length + 1] = method;
-			inv.children[i].thread = createChildThread(inv.children[i]);
+			inv.getChildren()[i].setParams(deepClone(childParams));
+			inv.getChildren()[i].getParams()[params.length] = inv.getChildren()[i].getCallee();
+			inv.getChildren()[i].getParams()[params.length + 1] = method;
+			inv.getChildren()[i].setThread(createChildThread(inv.getChildren()[i]));
 		}
 
 		invocations.put(ret, inv);
@@ -116,7 +116,7 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 		if (id < 0)
 			return;
 		MetamorphicMethodInvocation inv = invocations.remove(id);
-		inv.returnValue = val;
+		inv.setReturnValue(val);
 		Thread backgroundChecker = new Thread(tg,getRunnableFor(inv));
 		backgroundChecker.start();
 	}
@@ -126,27 +126,27 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 
 			@Override
 			public void run() {
-				Object origReturnValCloned = deepClone(primaryMethodInvocation.returnValue);
-				for (MethodInvocation i : primaryMethodInvocation.children) {
-					i.params[i.params.length - 1] = origReturnValCloned;
-					i.thread.start();
+				Object origReturnValCloned = deepClone(primaryMethodInvocation.getReturnValue());
+				for (MethodInvocation i : primaryMethodInvocation.getChildren()) {
+					i.getParams()[i.getParams().length - 1] = origReturnValCloned;
+					i.getThread().start();
 				}
 				try {
-					for (MethodInvocation i : primaryMethodInvocation.children) {
-						i.thread.join();
+					for (MethodInvocation i : primaryMethodInvocation.getChildren()) {
+						i.getThread().join();
 					}
-					Object[] checkParams = new Object[primaryMethodInvocation.params.length + 2];
-					for (int i = 0; i < primaryMethodInvocation.params.length; i++)
+					Object[] checkParams = new Object[primaryMethodInvocation.getParams().length + 2];
+					for (int i = 0; i < primaryMethodInvocation.getParams().length; i++)
 						checkParams[i + 2] = primaryMethodInvocation.orig_params[i];
-					for (MethodInvocation i : primaryMethodInvocation.children)
+					for (MethodInvocation i : primaryMethodInvocation.getChildren())
 					{
-						i.thread.join();
-						checkParams[0] = primaryMethodInvocation.returnValue;
-						checkParams[1] = i.returnValue;
-						if (((Boolean) i.checkMethod.invoke(null, checkParams)) == false)
+						i.getThread().join();
+						checkParams[0] = primaryMethodInvocation.getReturnValue();
+						checkParams[1] = i.getReturnValue();
+						if (((Boolean) i.getCheckMethod().invoke(null, checkParams)) == false)
 						{
-							throw new IllegalStateException("Metamorphic property has been violated on " + primaryMethodInvocation.method + ". Rule: [" + ((MetamorphicMethodInvocation) i).rule + "]. Outputs were ["
-									+ prettyPrint(primaryMethodInvocation.returnValue) + "], [" + prettyPrint(i.returnValue) + "]");
+							throw new IllegalStateException("Metamorphic property has been violated on " + primaryMethodInvocation.getMethod() + ". Rule: [" + ((MetamorphicMethodInvocation) i).rule + "]. Outputs were ["
+									+ prettyPrint(primaryMethodInvocation.getReturnValue()) + "], [" + prettyPrint(i.getReturnValue()) + "]");
 						}
 					}
 					System.out.println("Invocation result: " + primaryMethodInvocation);
