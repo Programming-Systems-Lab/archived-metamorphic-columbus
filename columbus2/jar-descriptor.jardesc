@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<?xml version="1.0" encoding="US-ASCII" standalone="no"?>
 <jardesc>
-    <jar path="columbus2-tester/lib/columbus2.jar"/>
+    <jar path="mtndew-tester/lib/columbus2.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/columbus2-runtime/jar-descriptor.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>

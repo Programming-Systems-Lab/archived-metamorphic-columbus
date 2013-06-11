@@ -29,6 +29,7 @@ public class Interceptor extends AbstractLazyCloningInterceptor {
 
 	public Interceptor(Object intercepted) {
 		super(intercepted);
+		System.out.println("Created interceptor");
 		try {
 			testerClass = Class.forName(intercepted.getClass().getCanonicalName() + "_tests");
 
