@@ -17,16 +17,16 @@ public class MetamorphicMethodInvocation extends MethodInvocation
 	@Override
 	public String toString() {
 		String paramStr = "";
-		if(params != null)
-		for(Object v : params)
+		if(getParams() != null)
+		for(Object v : getParams())
 		{
 			if(v != null)
 			paramStr += v.toString();
 		}
 		String childStr = "";
-		if(children != null)
-			for(MethodInvocation i : children)
+		if(getChildren() != null)
+			for(MethodInvocation i : getChildren())
 				childStr += i.toString() +",";
-		return "[Invocation on method "+ (method == null ? "null" : method.getName()) + " with params " + paramStr + " returning " + returnValue +" on object " + callee +".  Children: ["+childStr+"] ]";
+		return "[Invocation on method "+ (getMethod() == null ? "null" : getMethod().getName()) + " with params " + paramStr + " returning " + getReturnValue() +" on object " + getCallee() +".  Children: ["+childStr+"] ]";
 	}
 }
